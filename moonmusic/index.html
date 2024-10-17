@@ -1,1 +1,102 @@
+<html lang="en">
+   <head>
+      <style>
+         #cse-search-form {
+         display: flex;
+         align-items: center;
+         }
+         #cse-search-form input[type="text"] {
+         width: 200px;
+         height: 28px;
+         padding: 4px;
+         }
+         #cse-search-form button[type="submit"] {
+         height: 36px;
+         padding: 4px 8px;
+         background-color: #f1f1f1;
+         border: none;
+         border-radius: 0 4px 4px 0;
+         cursor: pointer;
+         }
+         #custom-icons {
+         display: flex;
+         justify-content: flex-end;
+         margin-top: 8px;
+         }
+         #custom-icons a {
+         margin-right: 8px;
+         }
+      </style>
+      <!-- Required meta tags -->
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <!-- Bootstrap CSS -->
+      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+      <!-- Font Awesome CSS -->
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+      <title>Hello, world!</title>
+      <!-- Include the Bootstrap JS file -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+      <!-- Include the Bootstrap CSS file -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+   <link rel="icon" type="image/x-icon" href="logo.ico">   
+</head>
+<body>  
+<div id="navbarContainer"></div>
 
+  <!-- Include your other page content here -->
+
+  <script>
+  document.addEventListener("DOMContentLoaded", function() {
+  const link = document.createElement("link");
+  link.rel = "icon";
+  link.type = "image/x-icon";
+  link.href = "logo.ico";
+  document.head.appendChild(link);
+});
+  
+    // Fetch and insert the navbar.html content
+    fetch("https://pompeu.neocities.org/navbar.html")
+      .then(response => response.text())
+      .then(content => {
+        document.getElementById("navbarContainer").innerHTML = content;
+      })
+      .catch(error => {
+        console.log("Error fetching navbar.html:", error);
+      });
+  </script>
+      <div id="cse-search-form">
+         <script async src="https://cse.google.com/cse.js?cx=c372276756c6e4d53"></script>
+         <div class="gcse-search"></div>
+      </div>
+      <div id="custom-icons">
+         <a href="https://github.com/drfperez">
+         <i class="fab fa-github fa-2x"></i>
+         </a>
+         <a href="https://blocs.xtec.cat/tecno">
+         <i class="fas fa-globe fa-2x"></i>
+         </a>
+         <a href="https://pompeu.neocities.org/webantiga/xtec.cat/_fperez5/">
+         <i class="fas fa-flag fa-2x"></i>
+         </a>
+         <a href="https://phytotherapy.neocities.org">
+         <i class="fas fa-leaf fa-2x"></i>
+         </a>
+         <a href="https://blocs.xtec.cat/5cities">
+         <i class="fas fa-recycle fa-2x"></i>
+         </a>
+         <a href="https://blocs.xtec.cat/arteducation">
+         <i class="fas fa-paint-brush fa-2x"></i></a>
+         <a href="https://blocs.xtec.cat/comeonstage">
+         <i class="fas fa-theater-masks fa-2x"></i>
+         </a>
+      </div>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+      <h1>Hello Pompeu students</h1>
+      <h3>You will find some projects based on codes using different programming languages and libraries designed for students at Pompeu Fabra High School (Martorell, Barcelona) by Prof. Francesc Perez about <a href=https://pompeu.neocities.org/syllabus> my official syllabus</a></h3>
+      <p>
+         To have an idea of the coding tools used in Science and Technology project look at the presentation below:
+      </p>
+      <iframe src="//www.slideshare.net/slideshow/embed_code/key/q3AYaIlc1GYmTs" width="595" height="485" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC; border-width:1px; margin-bottom:5px; max-width: 100%;" allowfullscreen> </iframe> 
+      <div style="margin-bottom:5px"></div>
+</html>
