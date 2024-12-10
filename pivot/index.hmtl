@@ -94,10 +94,10 @@
         <li>Busquem una imatge del nostre cantant preferit i li retallem les parts del cose</li>
         <li>Obrim l'imatge amb Fitxer>Obre</li>
         <li>Cliquem el menú Capes>Transparència>Afegeix canal alfa</li>
-
-    <ol>
-</div>
-
+        <li>Clicar sobre les eines sobre el llaçque va una selecció lliure fent clics al voltant de la part del cos que ens interesa i una 
+            mica més perqué no quedi buit quan es mou. Fem doble clic quan donem tota la volta i arribem al principi <li>
+        <li>Cliquem el menú imatge i dins a retalla a selecció i aiixò crea part del cos retallada 
+    </ol>
 <!-- Scripts necessaris -->
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.8/umd/popper.min.js"></script>
