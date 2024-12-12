@@ -203,14 +203,11 @@
         per després animar-los amb Gimp</li>
         <li>Busquem una imatge del nostre cantant preferit i li tallem les parts del cos</li> 
         <li>obrim l'imatge amb fitxer<obre</li>
-            <li>Cliquem al menú Capes>transferencia>Afeixeix canal alfa </li>
+            <li>Cliquem al menú Capes>transferencia >Afeixeix canal alfa </li>
     <li>Clica sobre les eines s'obre el llaç que fa una seleccó lliure fen clics al voltan de la part del cos que ens interessa i una mica 
         més per què no quedi vuit quan és mou. Fem doble clic quan donem tota la volta i arribem al principi</li>
 <   <li>Cliquem al menú imatge i dins a retalla la seleccó i això crea una part del cos retallada</li>
-    
-
-    <ol>
-
+    <ol/>
 <!-- Scripts necessaris -->
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.8/umd/popper.min.js"></script>
