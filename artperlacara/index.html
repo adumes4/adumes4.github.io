@@ -153,73 +153,49 @@
       switch (dominant) {
         case 'happy':
 case 'happy':
-
-  stroke(30, 60, 150); // blau suau
- strokeWeight(2);
+ stroke(30, 60, 150); // blau suau
+  strokeWeight(2);
   noFill();
 
-  // Cabells i monyo
+  // Perfil cara
   beginShape();
-  vertex(420, 150);
-  vertex(400, 130);
-  vertex(380, 110);
-  vertex(360, 115);
-  vertex(345, 135);
-  vertex(330, 170);
-  vertex(325, 200);
-  vertex(320, 230);
-  vertex(325, 260);
-  vertex(340, 290);
-  vertex(360, 310);
-  vertex(380, 320);
-  vertex(400, 325);
-  vertex(415, 310);
-  vertex(425, 290);
-  vertex(430, 270);
-  vertex(428, 240);
-  vertex(426, 210);
-  vertex(425, 180);
-  vertex(420, 150);
+  vertex(300, 200); // front
+  vertex(295, 220); // nas alt
+  vertex(290, 240); // punta nas
+  vertex(293, 245); // sota nas
+  vertex(285, 255); // llavi superior
+  vertex(283, 260); // llavi inferior
+  vertex(290, 270); // barbeta
+  vertex(300, 280); // base barbeta / coll
   endShape();
 
-  // Cara (perfil)
+  // Crani (part superior del cap)
   beginShape();
-  vertex(405, 200); // front
-  vertex(400, 220); // nas alt
-  vertex(395, 240); // punta del nas
-  vertex(397, 245); // sota nas
-  vertex(392, 255); // llavi superior
-  vertex(390, 260); // llavi inferior
-  vertex(395, 270); // barbeta
-  vertex(400, 280); // començament del coll
+  vertex(300, 200); // front
+  vertex(310, 180);
+  vertex(320, 170);
+  vertex(330, 180);
+  vertex(335, 200);
+  vertex(330, 240);
+  vertex(320, 270);
+  vertex(300, 280); // coll
   endShape();
 
   // Ull
   beginShape();
-  vertex(395, 230);
-  vertex(398, 230);
+  vertex(292, 230);
+  vertex(296, 230);
   endShape();
 
-  // Coll i roba
+  // Coll
   beginShape();
-  vertex(400, 280);
-  vertex(390, 310);
-  vertex(380, 340);
-  vertex(375, 370);
-  vertex(370, 400);
-  vertex(360, 420);
-  vertex(340, 440);
-  vertex(320, 445);
-  vertex(300, 430);
-  vertex(290, 400);
-  vertex(295, 360);
-  vertex(305, 330);
-  vertex(320, 300);
-  vertex(340, 280);
-  vertex(360, 270);
-  vertex(375, 268);
-  vertex(390, 275);
-  vertex(400, 280);
+  vertex(300, 280);
+  vertex(290, 310);
+  vertex(285, 340);
+  endShape();
+
+  // Monyo (cercle)
+  ellipse(335, 150, 30, 30);
   endShape(CLOSE);
   break;
 
