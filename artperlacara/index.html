@@ -153,52 +153,61 @@
       switch (dominant) {
         case 'happy':
 case 'happy':
- stroke(30, 60, 150); // blau suau
+function setup() {
+  createCanvas(600, 600);
+  background(255);
+
+  stroke(30, 60, 150);
   strokeWeight(2);
   noFill();
 
-  // Perfil cara
+  // Text expressió
+  fill(30, 150, 200);
+  noStroke();
+  textSize(24);
+  textAlign(CENTER);
+  text("Expressió: happy", width / 2, 40);
+  noFill();
+  stroke(30, 60, 150);
+
+  // Perfil cara (de dalt a baix)
   beginShape();
-  vertex(300, 200); // front
-  vertex(295, 220); // nas alt
-  vertex(290, 240); // punta nas
-  vertex(293, 245); // sota nas
-  vertex(285, 255); // llavi superior
-  vertex(283, 260); // llavi inferior
-  vertex(290, 270); // barbeta
-  vertex(300, 280); // base barbeta / coll
+  vertex(300, 150);  // front
+  vertex(290, 180);  // nas alt
+  vertex(285, 200);  // punta del nas
+  vertex(288, 210);  // sota nas
+  vertex(280, 220);  // llavi superior
+  vertex(282, 230);  // llavi inferior
+  vertex(290, 240);  // barbeta
+  vertex(300, 250);  // mandíbula
+  vertex(310, 270);  // coll
   endShape();
 
-  // Crani (part superior del cap)
+  // Cap per darrera (contorn crani)
   beginShape();
-  vertex(300, 200); // front
-  vertex(310, 180);
-  vertex(320, 170);
-  vertex(330, 180);
-  vertex(335, 200);
-  vertex(330, 240);
-  vertex(320, 270);
-  vertex(300, 280); // coll
+  vertex(300, 150);
+  vertex(315, 140);
+  vertex(330, 150);
+  vertex(335, 180);
+  vertex(330, 220);
+  vertex(315, 240);
+  vertex(300, 250);
   endShape();
 
   // Ull
   beginShape();
-  vertex(292, 230);
-  vertex(296, 230);
+  vertex(285, 190);
+  vertex(288, 192);
+  vertex(291, 190);
   endShape();
+
+  // Monyo
+  ellipse(335, 130, 30, 30);
 
   // Coll
-  beginShape();
-  vertex(300, 280);
-  vertex(290, 310);
-  vertex(285, 340);
-  endShape();
-
-  // Monyo (cercle)
-  ellipse(335, 150, 30, 30);
-  endShape(CLOSE);
-  break;
-
+  line(310, 270, 305, 310);
+  line(300, 250, 295, 310);
+}
           endShape(CLOSE);
           break;
 
