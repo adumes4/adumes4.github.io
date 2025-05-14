@@ -152,51 +152,34 @@
 
       switch (dominant) {
         case 'happy':
-          stroke(255,0,0)
-        beginShape();
-vertex(453, 246.1875);
-vertex(435, 262.1875);
-vertex(422, 272.1875);
-vertex(399, 282.1875);
-vertex(381, 287.1875);
-vertex(371, 296.1875);
-vertex(362, 314.1875);
-vertex(346, 334.1875);
-vertex(326, 343.1875);
-vertex(307, 351.1875);
-vertex(293, 351.1875);
-vertex(278, 348.1875);
-vertex(277, 361.1875);
-vertex(277, 378.1875);
-vertex(277, 407.1875);
-vertex(284, 425.1875);
-vertex(287, 441.1875);
-vertex(293, 453.1875);
-vertex(303, 460.1875);
-vertex(309, 468.1875);
-vertex(320, 474.1875);
-vertex(331, 479.1875);
-vertex(343, 479.1875);
-vertex(355, 477.1875);
-vertex(364, 471.1875);
-vertex(373, 462.1875);
-vertex(382, 456.1875);
-vertex(391, 452.1875);
-vertex(401, 441.1875);
-vertex(410, 426.1875);
-vertex(423, 421.1875);
-vertex(436, 416.1875);
-vertex(436, 400.1875);
-vertex(438, 377.1875);
-vertex(438, 361.1875);
-vertex(445, 352.1875);
-vertex(456, 335.1875);
-vertex(465, 320.1875);
-vertex(470, 299.1875);
-vertex(471, 274.1875);
-vertex(466, 256.1875);
-vertex(454, 246.1875);
-          
+case 'happy':
+  stroke(90, 60, 200); // Lila inspirat en el fons
+  fill(180, 160, 250, 100); // Color translúcid
+
+  beginShape();
+  curveVertex(400, 200); // capdamunt del cabell
+  curveVertex(420, 180);
+  curveVertex(440, 210);
+  curveVertex(430, 250); // part superior del cap
+  curveVertex(410, 280);
+  curveVertex(390, 300); // cara
+  curveVertex(370, 310);
+  curveVertex(350, 320);
+  curveVertex(330, 330); // barbeta
+  curveVertex(310, 340);
+  curveVertex(300, 360); // coll
+  curveVertex(310, 390);
+  curveVertex(340, 420);
+  curveVertex(380, 430); // espatlla
+  curveVertex(420, 410);
+  curveVertex(450, 380); // part posterior del cap
+  curveVertex(460, 340);
+  curveVertex(450, 300);
+  curveVertex(430, 250);
+  curveVertex(400, 200); // tornem al principi
+  endShape(CLOSE);
+  break;
+
           endShape(CLOSE);
           break;
 
