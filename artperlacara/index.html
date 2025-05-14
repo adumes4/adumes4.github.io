@@ -153,30 +153,73 @@
       switch (dominant) {
         case 'happy':
 case 'happy':
-  stroke(90, 60, 200); // Lila inspirat en el fons
-  fill(180, 160, 250, 100); // Color translúcid
 
+  stroke(30, 60, 150); // blau suau
+ strokeWeight(2);
+  noFill();
+
+  // Cabells i monyo
   beginShape();
-  curveVertex(400, 200); // capdamunt del cabell
-  curveVertex(420, 180);
-  curveVertex(440, 210);
-  curveVertex(430, 250); // part superior del cap
-  curveVertex(410, 280);
-  curveVertex(390, 300); // cara
-  curveVertex(370, 310);
-  curveVertex(350, 320);
-  curveVertex(330, 330); // barbeta
-  curveVertex(310, 340);
-  curveVertex(300, 360); // coll
-  curveVertex(310, 390);
-  curveVertex(340, 420);
-  curveVertex(380, 430); // espatlla
-  curveVertex(420, 410);
-  curveVertex(450, 380); // part posterior del cap
-  curveVertex(460, 340);
-  curveVertex(450, 300);
-  curveVertex(430, 250);
-  curveVertex(400, 200); // tornem al principi
+  vertex(420, 150);
+  vertex(400, 130);
+  vertex(380, 110);
+  vertex(360, 115);
+  vertex(345, 135);
+  vertex(330, 170);
+  vertex(325, 200);
+  vertex(320, 230);
+  vertex(325, 260);
+  vertex(340, 290);
+  vertex(360, 310);
+  vertex(380, 320);
+  vertex(400, 325);
+  vertex(415, 310);
+  vertex(425, 290);
+  vertex(430, 270);
+  vertex(428, 240);
+  vertex(426, 210);
+  vertex(425, 180);
+  vertex(420, 150);
+  endShape();
+
+  // Cara (perfil)
+  beginShape();
+  vertex(405, 200); // front
+  vertex(400, 220); // nas alt
+  vertex(395, 240); // punta del nas
+  vertex(397, 245); // sota nas
+  vertex(392, 255); // llavi superior
+  vertex(390, 260); // llavi inferior
+  vertex(395, 270); // barbeta
+  vertex(400, 280); // començament del coll
+  endShape();
+
+  // Ull
+  beginShape();
+  vertex(395, 230);
+  vertex(398, 230);
+  endShape();
+
+  // Coll i roba
+  beginShape();
+  vertex(400, 280);
+  vertex(390, 310);
+  vertex(380, 340);
+  vertex(375, 370);
+  vertex(370, 400);
+  vertex(360, 420);
+  vertex(340, 440);
+  vertex(320, 445);
+  vertex(300, 430);
+  vertex(290, 400);
+  vertex(295, 360);
+  vertex(305, 330);
+  vertex(320, 300);
+  vertex(340, 280);
+  vertex(360, 270);
+  vertex(375, 268);
+  vertex(390, 275);
+  vertex(400, 280);
   endShape(CLOSE);
   break;
 
