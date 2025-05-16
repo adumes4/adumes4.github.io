@@ -153,6 +153,24 @@
       switch (dominant) {
         case 'happy':
           stroke(255,0,0)
+          // Fons alegre amb cercles solars
+for (let i = 0; i < 100; i++) {
+  let x = random(VIRTUAL_W);
+  let y = random(VIRTUAL_H);
+  let r = random(10, 40);
+  fill(255, 255, 0, 50); // groc amb transparència
+  noStroke();
+  ellipse(x, y, r);
+}
+
+// Degradat suau de fons
+for (let y = 0; y < VIRTUAL_H; y++) {
+  let inter = map(y, 0, VIRTUAL_H, 0, 1);
+  let c = lerpColor(color(255, 255, 200), color(255, 180, 120), inter);
+  stroke(c);
+  line(0, y, VIRTUAL_W, y);
+}
+
           // Cara
 fill(255, 220, 180); // tono de piel claro y cálido
 stroke(0);
