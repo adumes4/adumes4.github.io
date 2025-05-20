@@ -433,14 +433,6 @@ endShape();
     line(0, y, VIRTUAL_W, y);
   }
 
-  // Pluja suau (línies fines que baixen)
-  stroke(200, 220, 255, 120);
-  for (let i = 0; i < 100; i++) {
-    let x = random(VIRTUAL_W);
-    let y = random(VIRTUAL_H);
-    line(x, y, x, y + 10);
-  }
-
   // Cara
   fill(220, 210, 200); // to de pell més apagat
   stroke(0);
@@ -676,7 +668,6 @@ endShape();
   vertex(368, 441.1875);
   endShape();
 
-          endShape(CLOSE);
           break;
 
         case 'angry':
