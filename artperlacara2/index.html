@@ -218,109 +218,277 @@
       noFill(); // Per defecte, no omple les figures dibuixades.
 
       // Selecciona el dibuix a realitzar segons l'expressió facial dominant.
-      switch(dominant) {
+  switch (dominant) {
         case 'happy':
-          // Configura traç i farcit per a l'expressió feliç
-          stroke(255, 204, 0); // Traç en color groc.
-          fill(255, 230, 100, 150 * intensity); // Farcit groc clar amb opacitat depenent de la intensitat.
-          beginShape(); // Inicia la definició d'una figura complexa.
-          for (let i = 0; i < 10; i++) {
-            // Calcula l'angle per distribuir equitativament 10 punts al voltant d'un cercle.
-            const angle = map(i, 0, 10, 0, TWO_PI);
-            // Calcula el radi amb una modulació animada mitjançant la funció sin().
-            const radius = baseSize * (0.8 + sin(t + angle * 2) * 0.2);
-            // Afegeix un vèrtex a la forma amb coordenades convertides de polars a cartesianes.
-            vertex(
-              centerX + cos(angle) * radius,
-              centerY + sin(angle) * radius
-            );
-          }
-          endShape(CLOSE); // Tanca la forma connectant el darrer vèrtex amb el primer.
-          break;
+          stroke(255,0,0)
+  // Degradat suau de fons
+for (let y = 0; y < VIRTUAL_H; y++) {
+  let inter = map(y, 0, VIRTUAL_H, 0, 1);
+  let c = lerpColor(color(255, 255, 200), color(255, 180, 120), inter);
+  stroke(c);
+  line(0, y, VIRTUAL_W, y);
+}
 
-        case 'sad':
-          // Configura traç i farcit per a l'expressió trista.
-          stroke(70, 130, 230); // Traç amb to blau.
-          fill(100, 180, 255, 100 * intensity); // Farcit blau clar amb opacitat variable.
-          beginShape(); // Inicia la forma.
-          vertex(centerX - baseSize, centerY); // Punt inicial a l'esquerra del centre.
-          // Dibuixa una corba de bezier per formar la part inferior de la figura.
-          bezierVertex(
-            centerX - baseSize / 2, centerY + baseSize * 1.5,
-            centerX + baseSize / 2, centerY + baseSize * 1.5,
-            centerX + baseSize, centerY
-          );
-          // Dibuixa una segunda corba superior per tancar la forma.
-          bezierVertex(
-            centerX + baseSize / 2, centerY - baseSize * 0.3,
-            centerX - baseSize / 2, centerY - baseSize * 0.3,
-            centerX - baseSize, centerY
-          );
-          endShape(CLOSE); // Tanca la figura.
-          break;
-
-        case 'angry':
-          // Configura traç i farcit per a l'expressió enfadada.
-          stroke(200, 50, 50); // Traç vermell.
-          fill(255, 100, 100, 200 * intensity); // Farcit vermell amb opacitat depenent de la intensitat.
-          beginShape(); // Inicia la forma.
-          for (let i = 0; i < 6; i++) {
-            // Calcula l'angle per distribuir 6 punts de manera uniforme al voltant d'un cercle.
-            const angle = map(i, 0, 6, 0, TWO_PI);
-            // Utilitza la funció noise per obtenir variacions de radi i donar un efecte irregular.
-            const radius = baseSize * (0.7 + noise(t + i) * 0.3);
-            // Afageix cada vèrtex calculat a la figura.
-            vertex(
-              centerX + cos(angle) * radius,
-              centerY + sin(angle) * radius
-            );
-          }
-          endShape(CLOSE); // Tanca la figura.
-          break;
-
-        case 'surprised':
-          // Configura traç i farcit per a l'expressió de sorpresa.
-          stroke(100, 200, 255); // Traç amb un blau clar.
-          fill(200, 240, 255, 150 * intensity); // Farcit blau molt clar amb opacitat variable.
-          // Determina el nombre de cercles a dibuixar segons la intensitat.
-          const circles = 5 + floor(intensity * 8);
-          // Dibuixa diversos cercles concèntrics.
-          for (let i = 0; i < circles; i++) {
-            const radius = baseSize * (0.2 + i / circles); // Calcula el radi per a cada cercle.
-            ellipse(centerX, centerY, radius * 2, radius * 2); // Dibuixa el cercle amb diàmetre doble del radi.
-          }
-          break;
-
-        case 'disgusted':
-          // Configura traç i farcit per a l'expressió de fastigueig.
-          stroke(100, 150, 50); // Traç en to verd oliva.
-          fill(150, 200, 100, 150 * intensity); // Farcit verd amb opacitat depenent de la intensitat.
-          beginShape(); // Inicia la configuració de la figura.
-          for (let i = 0; i < 8; i++) {
-            // Calcula l'angle per distribuir 8 punts al voltant d'un cercle.
-            const angle = map(i, 0, 8, 0, TWO_PI);
-            // Utilitza noise per obtenir un radi irregular en cada punt.
-            const radius = baseSize * (0.5 + noise(t + i * 0.5) * 0.5);
-            // Afegeix cada vèrtex a la figura.
-            vertex(
-              centerX + cos(angle) * radius,
-              centerY + sin(angle) * radius
-            );
-          }
-          endShape(CLOSE); // Tanca la figura.
-          break;
-
-        default:
-          // Cas per a 'neutral' o altres emocions no específicament definides.
-          stroke(150); // Traç de color gris.
-          fill(220, 220, 220, 100); // Farcit gris clar amb opacitat moderada.
-          const size = baseSize * 0.5; // Calcula la mida del rectangle.
-          rectMode(CENTER); // Dibuixa el rectangle utilitzant el centre com a punt de referència.
-          rect(centerX, centerY, size, size, size * 0.2); // Dibuixa el rectangle amb cantonades arrodonides.
-          break;
-      }
-    }
-
+          // Cara
+fill(255, 220, 180); // tono de piel claro y cálido
+stroke(0);
+beginShape();
+// ... (todos los vertex de la cara)
+endShape();
+        beginShape();//cara 
+vertex(453, 246.1875);
+vertex(435, 262.1875);
+vertex(422, 272.1875);
+vertex(399, 282.1875);
+vertex(381, 287.1875);
+vertex(371, 296.1875);
+vertex(362, 314.1875);
+vertex(346, 334.1875);
+vertex(326, 343.1875);
+vertex(307, 351.1875);
+vertex(293, 351.1875);
+vertex(278, 348.1875);
+vertex(277, 361.1875);
+vertex(277, 378.1875);
+vertex(277, 407.1875);
+vertex(284, 425.1875);
+vertex(287, 441.1875);
+vertex(293, 453.1875);
+vertex(303, 460.1875);
+vertex(309, 468.1875);
+vertex(320, 474.1875);
+vertex(331, 479.1875);
+vertex(343, 479.1875);
+vertex(355, 477.1875);
+vertex(364, 471.1875);
+vertex(373, 462.1875);
+vertex(382, 456.1875);
+vertex(391, 452.1875);
+vertex(401, 441.1875);
+vertex(410, 426.1875);
+vertex(423, 421.1875);
+vertex(436, 416.1875);
+vertex(436, 400.1875);
+vertex(438, 377.1875);
+vertex(438, 361.1875);
+vertex(445, 352.1875);
+vertex(456, 335.1875);
+vertex(465, 320.1875);
+vertex(470, 299.1875);
+vertex(471, 274.1875);
+vertex(466, 256.1875);
+vertex(454, 246.1875);
+      endShape();
+       // Ull esquerre
+fill(255); // blanco del ojo
+stroke(0);
+beginShape();
+// ... (vertex del ojo)
+endShape();
+          beginShape();// ull esquerre
+vertex(414, 342.1875);
+vertex(403, 341.1875);
+vertex(392, 344.1875);
+vertex(392, 351.1875);
+vertex(399, 355.1875);
+vertex(408, 356.1875);
+vertex(413, 350.1875);
+vertex(414, 343.1875);
+endShape();
+          // Nas
+fill(255, 200, 170); // tono similar a la piel, un poco más oscuro
+stroke(0);
+beginShape();
+// ... (vertex del nas)
+endShape();
+          beginShape();//nas
+vertex(436, 343.1875);
+vertex(423, 357.1875);
+vertex(418, 368.1875);
+vertex(411, 386.1875);
+vertex(405, 395.1875);
+vertex(398, 404.1875);
+vertex(398, 413.1875);
+vertex(400, 420.1875);
+vertex(409, 423.1875);
+vertex(420, 423.1875);
+vertex(429, 423.1875);
+vertex(438, 419.1875);
+vertex(441, 408.1875);
+vertex(438, 367.1875);
+vertex(436, 348.1875);
+vertex(436, 344.1875);
+endShape();
+          // Cos
+fill(150, 200, 255); // azul claro alegre para la ropa
+stroke(0);
+beginShape();
+// ... (vertex del cos)
+endShape();
+         beginShape();//cos
+vertex(272, 342.1875);
+vertex(271, 364.1875);
+vertex(271, 384.1875);
+vertex(269, 400.1875);
+vertex(274, 415.1875);
+vertex(283, 436.1875);
+vertex(291, 454.1875);
+vertex(305, 468.1875);
+vertex(309, 474.1875);
+vertex(300, 484.1875);
+vertex(288, 498.1875);
+vertex(301, 515.1875);
+vertex(317, 539.1875);
+vertex(333, 561.1875);
+vertex(353, 582.1875);
+vertex(365, 601.1875);
+vertex(380, 621.1875);
+vertex(396, 646.1875);
+vertex(410, 672.1875);
+vertex(425, 692.1875);
+vertex(441, 722.1875);
+vertex(452, 741.1875);
+vertex(462, 757.1875);
+vertex(473, 772.1875);
+vertex(445, 774.1875);
+vertex(424, 774.1875);
+vertex(399, 774.1875);
+vertex(368, 774.1875);
+vertex(343, 774.1875);
+vertex(306, 776.1875);
+vertex(284, 774.1875);
+vertex(259, 772.1875);
+vertex(223, 773.1875);
+vertex(185, 774.1875);
+vertex(144, 772.1875);
+vertex(111, 774.1875);
+vertex(81, 773.1875);
+vertex(43, 773.1875);
+vertex(43, 773.1875);
+vertex(12, 770.1875);
+vertex(9, 756.1875);
+vertex(6, 727.1875);
+vertex(6, 710.1875);
+vertex(6, 682.1875);
+vertex(7, 662.1875);
+vertex(13, 644.1875);
+vertex(25, 620.1875);
+vertex(35, 594.1875);
+vertex(56, 565.1875);
+vertex(71, 544.1875);
+vertex(91, 523.1875);
+vertex(106, 506.1875);
+vertex(128, 483.1875);
+vertex(136, 471.1875);
+vertex(145, 457.1875);
+vertex(159, 444.1875);
+vertex(172, 429.1875);
+vertex(184, 414.1875);
+vertex(197, 415.1875);
+vertex(219, 399.1875);
+vertex(229, 384.1875);
+vertex(239, 370.1875);
+vertex(245, 351.1875);
+vertex(250, 332.1875);
+vertex(260, 337.1875);
+vertex(273, 344.1875);
+endShape();
+          // Cabell
+fill(255, 160, 0); // naranja brillante (pelirrojo alegre)
+stroke(0);
+beginShape();
+// ... (vertex del cabell)
+endShape();
+          
+beginShape();
+vertex(426, 266.1875);
+vertex(406, 286.1875);
+vertex(375, 311.1875);
+vertex(359, 320.1875);
+vertex(338, 336.1875);
+vertex(309, 346.1875);
+vertex(283, 346.1875);
+vertex(255, 335.1875);
+vertex(247, 346.1875);
+vertex(224, 357.1875);
+vertex(203, 353.1875);
+vertex(184, 343.1875);
+vertex(170, 325.1875);
+vertex(171, 306.1875);
+vertex(180, 272.1875);
+vertex(197, 256.1875);
+vertex(197, 233.1875);
+vertex(208, 213.1875);
+vertex(224, 199.1875);
+vertex(229, 185.1875);
+vertex(239, 174.1875);
+vertex(242, 155.1875);
+vertex(248, 130.1875);
+vertex(265, 108.1875);
+vertex(274, 88.1875);
+vertex(284, 71.1875);
+vertex(303, 65.1875);
+vertex(327, 65.1875);
+vertex(349, 74.1875);
+vertex(366, 84.1875);
+vertex(378, 102.1875);
+vertex(389, 129.1875);
+vertex(407, 147.1875);
+vertex(431, 159.1875);
+vertex(442, 174.1875);
+vertex(440, 197.1875);
+vertex(455, 203.1875);
+vertex(473, 219.1875);
+vertex(488, 234.1875);
+vertex(500, 260.1875);
+vertex(494, 285.1875);
+vertex(482, 301.1875);
+vertex(469, 310.1875);
+vertex(474, 285.1875);
+vertex(470, 262.1875);
+vertex(457, 241.1875);
+vertex(449, 247.1875);
+vertex(429, 263.1875);
+endShape();
+          // Llavis
+fill(255, 100, 150); // rosa fuerte
+stroke(0);
+beginShape();
+// ... (vertex dels llavis)
+endShape();
+          beginShape();//llavis
+vertex(402, 442.1875);
+vertex(391, 441.1875);
+vertex(379, 442.1875);
+vertex(368, 441.1875);
+vertex(372, 451.1875);
+vertex(377, 458.1875);
+vertex(385, 462.1875);
+vertex(393, 460.1875);
+vertex(393, 454.1875);
+vertex(401, 445.1875);
+endShape();
+                  // Cos
+fill(150, 200, 255); // azul claro alegre para la ropa
+stroke(0);
+beginShape();
+// ... (vertex del cos)
+endShape();
+          beginShape();// part del coll
+vertex(241, 365.1875);
+vertex(226, 387.1875);
+vertex(216, 404.1875);
+vertex(196, 414.1875);
+vertex(232, 444.1875);
+vertex(257, 470.1875);
+vertex(271, 492.1875);
+vertex(280, 501.1875);
+vertex(307, 474.1875);
+vertex(280, 430.1875);
+vertex(271, 383.1875);
+vertex(239, 361.1875);
+endShape();
+          endShape(CLOSE);)
     // Funció per dibuixar el Heads-Up Display (HUD) amb informació sobre l'expressió detectada.
     function drawHUD() {
       // Extrau la informació de l'expressió actual: la clau dominant i la seva intensitat.
