@@ -665,7 +665,7 @@ endShape();
   vertex(385, 447.1875);
   vertex(377, 445.1875);
   vertex(368, 441.1875);
-  endShape();
+  endShape(CLOSE);
           break;
 
        case 'sorpresa':
@@ -676,7 +676,6 @@ endShape();
     stroke(c);
     line(0, y, VIRTUAL_W, y);
   }
-
   // Cara
   fill(255, 220, 180); // to de pell càlid
   stroke(0);
@@ -893,7 +892,7 @@ endShape();
   vertex(250, 332.1875);
   vertex(260, 337.1875);
   vertex(273, 344.1875);
-  endShape();
+  endShape(CLOSE);
           break;
 
       case 'disgust':
@@ -904,7 +903,6 @@ endShape();
     stroke(c);
     line(0, y, VIRTUAL_W, y);
   }
-
   // Cara
   fill(255, 220, 180);
   stroke(0);
@@ -1040,10 +1038,8 @@ endShape();
   vertex(390, 550);
   vertex(370, 530);
   vertex(350, 500);
-  endShape();
-
+  endShape(CLOSE);
           break;
-
 
         default:
           stroke(150,150,150,150); // gris suau
