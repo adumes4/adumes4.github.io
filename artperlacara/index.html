@@ -896,41 +896,154 @@ endShape();
   endShape();
           break;
 
-        case 'fearful':
-          stroke(100,100,100,150); // gris
-          beginShape();
-          for (let x = 0; x <= VIRTUAL_W; x += 10) {
-            let y = VIRTUAL_H/2 + 50 * sin((x - VIRTUAL_W/2) * 0.05) * intensity;
-            vertex(x, y);
-          }
-          endShape();
+      case 'disgust':
+  // Degradat suau de fons (verdós, per sensació de nàusea)
+  for (let y = 0; y < VIRTUAL_H; y++) {
+    let inter = map(y, 0, VIRTUAL_H, 0, 1);
+    let c = lerpColor(color(200, 240, 200), color(160, 200, 160), inter);
+    stroke(c);
+    line(0, y, VIRTUAL_W, y);
+  }
+
+  // Cara
+  fill(255, 220, 180);
+  stroke(0);
+  beginShape();
+  vertex(352, 389);
+  vertex(348, 384);
+  vertex(345, 378);
+  vertex(343, 372);
+  vertex(342, 365);
+  vertex(342, 358);
+  vertex(342, 351);
+  vertex(344, 344);
+  vertex(347, 337);
+  vertex(352, 331);
+  vertex(357, 326);
+  vertex(363, 322);
+  vertex(370, 320);
+  vertex(377, 318);
+  vertex(384, 318);
+  vertex(391, 319);
+  vertex(398, 321);
+  vertex(405, 325);
+  vertex(411, 330);
+  vertex(416, 336);
+  vertex(420, 343);
+  vertex(423, 350);
+  vertex(424, 357);
+  vertex(424, 364);
+  vertex(423, 371);
+  vertex(421, 377);
+  vertex(418, 383);
+  vertex(414, 388);
+  vertex(408, 392);
+  vertex(401, 395);
+  vertex(394, 396);
+  vertex(387, 396);
+  vertex(380, 394);
+  vertex(373, 391);
+  vertex(366, 390);
+  vertex(359, 390);
+  vertex(352, 389);
+  endShape();
+
+  // Ulls mig tancats, forma de disgust
+  fill(255);
+  stroke(0);
+  beginShape();
+  vertex(392, 344);
+  vertex(402, 345);
+  vertex(412, 343);
+  vertex(412, 340);
+  vertex(402, 339);
+  vertex(392, 340);
+  endShape();
+
+  // Pupila desviada
+  fill(0);
+  ellipse(407, 342, 5, 5);
+
+  // Celles inclinades
+  stroke(0);
+  strokeWeight(3);
+  line(388, 332, 400, 336);
+  line(406, 336, 418, 332);
+  strokeWeight(1);
+
+  // Nas
+  fill(255, 200, 170);
+  stroke(0);
+  beginShape();
+  vertex(388, 373);
+  vertex(386, 368);
+  vertex(386, 363);
+  vertex(388, 358);
+  vertex(392, 355);
+  vertex(396, 358);
+  vertex(398, 363);
+  vertex(398, 368);
+  vertex(396, 373);
+  vertex(392, 376);
+  vertex(388, 373);
+  endShape();
+
+  // Boca de disgust
+  noFill();
+  stroke(0);
+  strokeWeight(2);
+  arc(385, 460, 30, 15, PI, 0);
+  strokeWeight(1);
+
+  // Cabell
+  fill(255, 160, 0);
+  stroke(0);
+  beginShape();
+  vertex(342, 351);
+  vertex(344, 344);
+  vertex(347, 337);
+  vertex(352, 331);
+  vertex(357, 326);
+  vertex(363, 322);
+  vertex(370, 320);
+  vertex(377, 318);
+  vertex(384, 318);
+  vertex(391, 319);
+  vertex(398, 321);
+  vertex(405, 325);
+  vertex(411, 330);
+  vertex(416, 336);
+  vertex(420, 343);
+  vertex(423, 350);
+  vertex(424, 357);
+  vertex(424, 340);
+  vertex(420, 325);
+  vertex(410, 311);
+  vertex(397, 300);
+  vertex(384, 295);
+  vertex(371, 297);
+  vertex(359, 305);
+  vertex(350, 317);
+  vertex(344, 332);
+  vertex(342, 351);
+  endShape();
+
+  // Cos
+  fill(150, 200, 255);
+  stroke(0);
+  beginShape();
+  vertex(350, 500);
+  vertex(370, 470);
+  vertex(400, 470);
+  vertex(420, 500);
+  vertex(410, 530);
+  vertex(390, 550);
+  vertex(370, 530);
+  vertex(350, 500);
+  endShape();
+
           break;
 
-        case 'surprised':
-          stroke(0,150,255,150); // blau clar
-          beginShape();
-          for (let i = 0; i < 20; i++) {
-            let angle = random(TWO_PI);
-            let r = 50 + 100 * intensity;
-            let x = VIRTUAL_W/2 + r * cos(angle);
-            let y = VIRTUAL_H/2 + r * sin(angle);
-            vertex(x, y);
-          }
-          endShape(CLOSE);
-          break;
-
-        case 'disgusted':
-          stroke(0,150,0,150); // verd
-          beginShape();
-          for (let i = 0; i < 12; i++) {
-            let angle = map(i, 0, 12, 0, TWO_PI);
-            let r = 75 + random(-50, 50) * intensity;
-            let x = VIRTUAL_W/2 + r * cos(angle);
-            let y = VIRTUAL_H/2 + r * sin(angle);
-            vertex(x, y);
-          }
-          endShape(CLOSE);
-          break;
 
         default:
           stroke(150,150,150,150); // gris suau
