@@ -670,54 +670,227 @@ endShape();
 
           break;
 
-        case 'angry':
-          stroke(200,0,0,150); // vermell
-          beginShape();
-          for (let i = 0; i < 16; i++) {
-            let angle = map(i, 0, 16, 0, TWO_PI);
-            let r = i % 2 ? 100 : 175;
-            let x = VIRTUAL_W/2 + r * cos(angle);
-            let y = VIRTUAL_H/2 + r * sin(angle);
-            vertex(x, y);
-          }
-          endShape(CLOSE);
-          break;
+       function drawVergonya() {
+  // Degradat suau de fons vermellós pàl·lid (enrojolament vergonyós)
+  for (let y = 0; y < VIRTUAL_H; y++) {
+    let inter = map(y, 0, VIRTUAL_H, 0, 1);
+    let c = lerpColor(color(255, 230, 230), color(255, 180, 180), inter);
+    stroke(c);
+    line(0, y, VIRTUAL_W, y);
+  }
 
-        case 'fearful':
-          stroke(100,100,100,150); // gris
-          beginShape();
-          for (let x = 0; x <= VIRTUAL_W; x += 10) {
-            let y = VIRTUAL_H/2 + 50 * sin((x - VIRTUAL_W/2) * 0.05) * intensity;
-            vertex(x, y);
-          }
-          endShape();
-          break;
+  // Cara: to de pell amb tons lleugerament rosats
+  fill(255, 210, 190);
+  stroke(0);
+  beginShape();
+  // Usa els vertex de la cara similar a happy i sad (per exemple)
+  vertex(453, 246);
+  vertex(435, 262);
+  vertex(422, 272);
+  vertex(399, 282);
+  vertex(381, 287);
+  vertex(371, 296);
+  vertex(362, 314);
+  vertex(346, 334);
+  vertex(326, 343);
+  vertex(307, 351);
+  vertex(293, 351);
+  vertex(278, 348);
+  vertex(277, 361);
+  vertex(277, 378);
+  vertex(277, 407);
+  vertex(284, 425);
+  vertex(287, 441);
+  vertex(293, 453);
+  vertex(303, 460);
+  vertex(309, 468);
+  vertex(320, 474);
+  vertex(331, 479);
+  vertex(343, 479);
+  vertex(355, 477);
+  vertex(364, 471);
+  vertex(373, 462);
+  vertex(382, 456);
+  vertex(391, 452);
+  vertex(401, 441);
+  vertex(410, 426);
+  vertex(423, 421);
+  vertex(436, 416);
+  vertex(436, 400);
+  vertex(438, 377);
+  vertex(438, 361);
+  vertex(445, 352);
+  vertex(456, 335);
+  vertex(465, 320);
+  vertex(470, 299);
+  vertex(471, 274);
+  vertex(466, 256);
+  vertex(454, 246);
+  endShape();
 
-        case 'surprised':
-          stroke(0,150,255,150); // blau clar
-          beginShape();
-          for (let i = 0; i < 20; i++) {
-            let angle = random(TWO_PI);
-            let r = 50 + 100 * intensity;
-            let x = VIRTUAL_W/2 + r * cos(angle);
-            let y = VIRTUAL_H/2 + r * sin(angle);
-            vertex(x, y);
-          }
-          endShape(CLOSE);
-          break;
+  // Galtes vermelloses (zones de vergonya)
+  noStroke();
+  fill(255, 100, 120, 150);
+  ellipse(380, 370, 70, 40);
+  ellipse(430, 370, 70, 40);
 
-        case 'disgusted':
-          stroke(0,150,0,150); // verd
-          beginShape();
-          for (let i = 0; i < 12; i++) {
-            let angle = map(i, 0, 12, 0, TWO_PI);
-            let r = 75 + random(-50, 50) * intensity;
-            let x = VIRTUAL_W/2 + r * cos(angle);
-            let y = VIRTUAL_H/2 + r * sin(angle);
-            vertex(x, y);
-          }
-          endShape(CLOSE);
-          break;
+  // Ull esquerre (mirada desviada)
+  fill(255);
+  stroke(0);
+  beginShape();
+  vertex(414, 342);
+  vertex(403, 341);
+  vertex(392, 344);
+  vertex(392, 351);
+  vertex(399, 355);
+  vertex(408, 356);
+  vertex(413, 350);
+  vertex(414, 343);
+  endShape();
+
+  // Iris més petit, mirant una mica cap a un costat
+  fill(80, 80, 150);
+  ellipse(400, 347, 12, 14);
+
+  // Nas (similar als altres)
+  fill(210, 180, 170);
+  stroke(0);
+  beginShape();
+  vertex(436, 343);
+  vertex(423, 357);
+  vertex(418, 368);
+  vertex(411, 386);
+  vertex(405, 395);
+  vertex(398, 404);
+  vertex(398, 413);
+  vertex(400, 420);
+  vertex(409, 423);
+  vertex(420, 423);
+  vertex(429, 423);
+  vertex(438, 419);
+  vertex(441, 408);
+  vertex(438, 367);
+  vertex(436, 348);
+  vertex(436, 344);
+  endShape();
+
+  // Boca tancada o lleu somriure incòmode
+  fill(255, 100, 120);
+  stroke(0);
+  strokeWeight(2);
+  beginShape();
+  vertex(380, 460);
+  vertex(390, 455);
+  vertex(400, 457);
+  vertex(410, 455);
+  vertex(420, 460);
+  endShape();
+
+  strokeWeight(4);
+}
+function drawDisgust() {
+  // Degradat fons verd grisós (sensació de disgust)
+  for (let y = 0; y < VIRTUAL_H; y++) {
+    let inter = map(y, 0, VIRTUAL_H, 0, 1);
+    let c = lerpColor(color(180, 230, 200), color(140, 190, 150), inter);
+    stroke(c);
+    line(0, y, VIRTUAL_W, y);
+  }
+
+  // Cara amb to verdós
+  fill(200, 230, 200);
+  stroke(0);
+  beginShape();
+  vertex(453, 246);
+  vertex(435, 262);
+  vertex(422, 272);
+  vertex(399, 282);
+  vertex(381, 287);
+  vertex(371, 296);
+  vertex(362, 314);
+  vertex(346, 334);
+  vertex(326, 343);
+  vertex(307, 351);
+  vertex(293, 351);
+  vertex(278, 348);
+  vertex(277, 361);
+  vertex(277, 378);
+  vertex(277, 407);
+  vertex(284, 425);
+  vertex(287, 441);
+  vertex(293, 453);
+  vertex(303, 460);
+  vertex(309, 468);
+  vertex(320, 474);
+  vertex(331, 479);
+  vertex(343, 479);
+  vertex(355, 477);
+  vertex(364, 471);
+  vertex(373, 462);
+  vertex(382, 456);
+  vertex(391, 452);
+  vertex(401, 441);
+  vertex(410, 426);
+  vertex(423, 421);
+  vertex(436, 416);
+  vertex(436, 400);
+  vertex(438, 377);
+  vertex(438, 361);
+  vertex(445, 352);
+  vertex(456, 335);
+  vertex(465, 320);
+  vertex(470, 299);
+  vertex(471, 274);
+  vertex(466, 256);
+  vertex(454, 246);
+  endShape();
+
+  // Ull esquerre frunzit
+  fill(255);
+  stroke(0);
+  beginShape();
+  vertex(414, 342);
+  vertex(403, 341);
+  vertex(392, 344);
+  vertex(392, 351);
+  vertex(399, 355);
+  vertex(408, 356);
+  vertex(413, 350);
+  vertex(414, 343);
+  endShape();
+
+  // Iris normal
+  fill(50, 100, 50);
+  ellipse(403, 347, 14, 14);
+
+  // Nas arrufat: línies que mostren arrufament al voltant del nas
+  stroke(0);
+  strokeWeight(3);
+  noFill();
+  line(430, 360, 435, 355);
+  line(440, 360, 445, 355);
+
+  // Boca arrufada cap avall
+  noFill();
+  stroke(0);
+  strokeWeight(3);
+  beginShape();
+  vertex(380, 460);
+  vertex(390, 470);
+  vertex(400, 472);
+  vertex(410, 470);
+  vertex(420, 460);
+  endShape();
+
+  strokeWeight(4);
+}
+function drawSorpresa() {
+  // Degradat de fons lluminós
+  for (let y = 0; y < VIRTUAL_H; y++) {
+    let inter = map(y, 0, VIRTUAL_H, 0, 1);
+    let c = lerpColor(color(240, 240, 255), color(180, 180, 255), inter);
+    stroke(c);
+
 
         default:
           stroke(150,150,150,150); // gris suau
