@@ -669,20 +669,42 @@ endShape();
   endShape();
 
           break;
+const VIRTUAL_W = 720;
+const VIRTUAL_H = 480;
+
+function setup() {
+  createCanvas(VIRTUAL_W, VIRTUAL_H);
+  noLoop();
+}
+
+function draw() {
+  // Prova cada emoció canviant el primer paràmetre: "fear", "disgust", "surprise"
+  drawArt("fear", 1);
+  // drawArt("disgust", 1);
+  // drawArt("surprise", 1);
+}
+
+/*
+Funció principal per dibuixar l’art segons l’emoció dominant i la seva intensitat.
+dominant: tipus d’emoció ("fear", "disgust", "surprise")
+intensity: intensitat de l’emoció (1 en aquest cas, per simplificar)
+*/
 function drawArt(dominant, intensity) {
+  clear();
+
   noFill();
   strokeWeight(4);
 
   switch (dominant) {
-    case 'fear': // Vergonya
-      // Fondo suave violeta pálido
+    case 'fear': // Por (Vergonya)
+      // Fons violeta pàlid, degradat vertical
       for (let y = 0; y < VIRTUAL_H; y++) {
         let inter = map(y, 0, VIRTUAL_H, 0, 1);
         let c = lerpColor(color(200, 180, 220), color(170, 150, 200), inter);
         stroke(c);
         line(0, y, VIRTUAL_W, y);
       }
-      // Cara pálida y rojiza (vergonya)
+      // Cara pàl·lida rogenca
       fill(255, 210, 210);
       stroke(120, 50, 50);
       beginShape();
@@ -709,7 +731,7 @@ function drawArt(dominant, intensity) {
       vertex(440, 255);
       endShape(CLOSE);
 
-      // Ojo izquierdo tímido
+      // Ull esquerre tímid
       fill(255);
       stroke(100, 30, 30);
       beginShape();
@@ -722,7 +744,7 @@ function drawArt(dominant, intensity) {
       vertex(395, 345);
       endShape(CLOSE);
 
-      // Mejillas sonrojadas
+      // Galtes ruboroses
       noStroke();
       fill(255, 120, 120, 150);
       ellipse(350, 370, 40, 30);
@@ -730,14 +752,14 @@ function drawArt(dominant, intensity) {
       break;
 
     case 'disgust':
-      // Fondo verdoso pálido
+      // Fons verdós pàlid, degradat vertical
       for (let y = 0; y < VIRTUAL_H; y++) {
         let inter = map(y, 0, VIRTUAL_H, 0, 1);
         let c = lerpColor(color(200, 230, 200), color(160, 210, 160), inter);
         stroke(c);
         line(0, y, VIRTUAL_W, y);
       }
-      // Cara con tono verdoso
+      // Cara verdosa
       fill(210, 230, 210);
       stroke(50, 90, 50);
       beginShape();
@@ -763,7 +785,7 @@ function drawArt(dominant, intensity) {
       vertex(450, 260);
       endShape(CLOSE);
 
-      // Ojo izquierdo entrecerrado y arrugado (disgust)
+      // Ull esquerre entrecercat i arrugat
       noFill();
       stroke(30, 80, 30);
       strokeWeight(5);
@@ -773,7 +795,7 @@ function drawArt(dominant, intensity) {
       vertex(395, 333);
       endShape();
 
-      // Boca cerrada con ligera curva hacia abajo
+      // Boca tancada amb lleugera corba cap avall
       noFill();
       stroke(80, 30, 30);
       strokeWeight(4);
@@ -784,14 +806,14 @@ function drawArt(dominant, intensity) {
       break;
 
     case 'surprise':
-      // Fondo claro azul cielo
+      // Fons blau clar, degradat vertical
       for (let y = 0; y < VIRTUAL_H; y++) {
         let inter = map(y, 0, VIRTUAL_H, 0, 1);
         let c = lerpColor(color(220, 240, 255), color(180, 210, 255), inter);
         stroke(c);
         line(0, y, VIRTUAL_W, y);
       }
-      // Cara pálida y abierta
+      // Cara pàl·lida
       fill(255, 250, 240);
       stroke(100, 100, 120);
       beginShape();
@@ -817,24 +839,15 @@ function drawArt(dominant, intensity) {
       vertex(450, 260);
       endShape(CLOSE);
 
-      // Ojos abiertos muy grandes
+      // Ulls oberts grans
       fill(255);
       stroke(50, 50, 80);
       ellipse(350, 340, 40, 35);
       ellipse(410, 340, 40, 35);
 
-      // Pupilas dilatadas
+      // Pupils dilatades
       fill(30, 30, 60);
       ellipse(350, 340, 20, 20);
-      ellipse(410, 340, 20, 20);
-
-      // Boca abierta redonda
-      noFill();
-      stroke(80, 80, 100);
-      strokeWeight(4);
-      ellipse(380, 400, 50, 60);
-      break;
-  }
 }
 
         default:
