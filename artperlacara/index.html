@@ -1,1868 +1,346 @@
-
-
 <!DOCTYPE html>
 <html lang="ca">
 <head>
-  <meta charset="UTF-8">
-  <title>Art Geomètric Amb Expressió Facial</title>
-  <!-- Llibreria p5.js per fer gràfics interactius -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.11.3/p5.js"></script>
-  <!-- Llibreria ml5.js per reconeixement facial amb machine learning -->
-  <script src="https://cdn.jsdelivr.net/gh/ml5js/Intro-ML-Arts-IMA@ml5-build-10-7-19/ml5_build/ml5.min.js"></script>
-  <style>
-    /* Estil general del cos de la pàgina */
-    body {
-      margin: 0; /* sense marges externs */
-      padding: 0; /* sense espais interns */
-      background-color: #f4f4f4; /* color de fons gris clar */
-      display: flex; /* fa servir flexbox per alinear */
-      justify-content: center; /* centra horitzontalment */
-      align-items: center; /* centra verticalment */
-      height: 100vh; /* alçada de tota la pantalla */
-    }
+  <meta charset="UTF-8">
+  <title>Art Geomètric Amb Expressió Facial</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.11.3/p5.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/ml5js/Intro-ML-Arts-IMA@ml5-build-10-7-19/ml5_build/ml5.min.js"></script>
+  <style>
+    /* Estil general del cos de la pàgina */
+    body {
+      margin: 0; /* sense marges externs */
+      padding: 0; /* sense espais interns */
+      background-color: #f4f4f4; /* color de fons gris clar */
+      display: flex; /* fa servir flexbox per alinear */
+      justify-content: center; /* centra horitzontalment */
+      align-items: center; /* centra verticalment */
+      height: 100vh; /* alçada de tota la pantalla */
+    }
 
-    /* Pantalla de càrrega quan els models encara es carreguen */
-    #loading-screen {
-      position: fixed; /* fixa la posició a la pantalla */
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(255,255,255,0.9); /* blanc amb transparència */
-      display: flex;
-      flex-direction: column; /* columna vertical */
-      justify-content: center;
-      align-items: center;
-      font-family: Arial, sans-serif;
-      font-size: 18px;
-      color: #333; /* gris fosc */
-      z-index: 10; /* per sobre de tot */
-    }
+    /* Pantalla de càrrega quan els models encara es carreguen */
+    #loading-screen {
+      position: fixed; /* fixa la posició a la pantalla */
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255,255,255,0.9); /* blanc amb transparència */
+      display: flex;
+      flex-direction: column; /* columna vertical */
+      justify-content: center;
+      align-items: center;
+      font-family: Arial, sans-serif;
+      font-size: 18px;
+      color: #333; /* gris fosc */
+      z-index: 10; /* per sobre de tot */
+    }
 
-    /* Rodona animada de càrrega */
-    .loader {
-      width: 50px;
-      height: 50px;
-      border: 6px solid #3498db; /* blau */
-      border-top: 6px solid transparent;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-      margin-bottom: 10px;
-    }
+    /* Rodona animada de càrrega */
+    .loader {
+      width: 50px;
+      height: 50px;
+      border: 6px solid #3498db; /* blau */
+      border-top: 6px solid transparent;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 10px;
+    }
 
-    /* Animació de gir */
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-  </style>
+    /* Animació de gir */
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
 </head>
 <body>
-  <!-- Div visible mentre es carreguen els models -->
-  <div id="loading-screen">
-    <div class="loader"></div>
-    <p>Carregant models, si us plau, espera...</p>
-  </div>
-  <script>
-    // Variables globals
-    let faceapi, detections = [], video;
-    let modelsMostrats = false;
+    <div id="loading-screen">
+    <div class="loader"></div>
+    <p>Carregant models, si us plau, espera...</p>
+  </div>
+  <script>
+    // Variables globals
+    let faceapi, detections = [], video;
+    let modelsMostrats = false;
 
-    // Mida virtual que es manté proporcional a qualsevol pantalla
-    const VIRTUAL_W = 600;
-    const VIRTUAL_H = 778;
+    // Mida virtual que es manté proporcional a qualsevol pantalla
+    const VIRTUAL_W = 600;
+    const VIRTUAL_H = 778;
 
-    // Funció que es crida al començar
-    function setup() {
-      createCanvas(windowWidth, windowHeight); // crea una zona de dibuix de la mida de la finestra
-      video = createCapture(VIDEO);            // activa la webcam
-      video.size(480, 480);                    // estableix la mida del vídeo
-      video.hide();                            // amaga el vídeo per defecte
+    // Funció que es crida al començar
+    function setup() {
+      createCanvas(windowWidth, windowHeight); // crea una zona de dibuix de la mida de la finestra
+      video = createCapture(VIDEO);            // activa la webcam
+      video.size(480, 480);                    // estableix la mida del vídeo
+      video.hide();                            // amaga el vídeo per defecte
 
-      // Configura els paràmetres del reconeixement facial
-      const options = {
-        withLandmarks: true,
-        withExpressions: true,
-        withDescriptors: false
-      };
-      faceapi = ml5.faceApi(video, options, modelReady); // inicialitza el model amb la webcam
-    }
+      // Configura els paràmetres del reconeixement facial
+      const options = {
+        withLandmarks: true,
+        withExpressions: true,
+        withDescriptors: false
+      };
+      faceapi = ml5.faceApi(video, options, modelReady); // inicialitza el model amb la webcam
+    }
 
-    // Redimensiona el canvas si canvia la mida de la finestra
-    function windowResized() {
-      resizeCanvas(windowWidth, windowHeight);
-    }
+    // Redimensiona el canvas si canvia la mida de la finestra
+    function windowResized() {
+      resizeCanvas(windowWidth, windowHeight);
+    }
 
-    // Quan el model està carregat correctament
-    function modelReady() {
-      faceapi.detect(gotResults); // comença a detectar cares
-    }
+    // Quan el model està carregat correctament
+    function modelReady() {
+      faceapi.detect(gotResults); // comença a detectar cares
+    }
 
-    // Quan hi ha resultats del model
-    function gotResults(err, result) {
-      if (err) return console.error(err); // mostra error si hi ha
-      detections = result; // desa les dades de la detecció
-      if (!modelsMostrats) {
-        document.getElementById("loading-screen").style.display = "none";
-        modelsMostrats = true;
-      }
-      faceapi.detect(gotResults); // torna a detectar de forma continua
-    }
+    // Quan hi ha resultats del model
+    function gotResults(err, result) {
+      if (err) return console.error(err); // mostra error si hi ha
+      detections = result; // desa les dades de la detecció
+      if (!modelsMostrats) {
+        document.getElementById("loading-screen").style.display = "none";
+        modelsMostrats = true;
+      }
+      faceapi.detect(gotResults); // torna a detectar de forma continua
+    }
 
-    // Funció de dibuix
-    function draw() {
-      background(255); // fons blanc
+    // Funció de dibuix
+    function draw() {
+      background(255); // fons blanc
 
-      // Inicialitzem l'estat emocional detectat
-      let dominant = "neutral", intensity = 0;
-      if (detections.length > 0) {
-        let expr = detections[0].expressions;
-        dominant = Object.keys(expr).reduce((a, b) => expr[a] > expr[b] ? a : b);
-        intensity = expr[dominant];
-      }
+      // Inicialitzem l'estat emocional detectat
+      let dominant = "neutral", intensity = 0;
+      if (detections.length > 0) {
+        let expr = detections[0].expressions;
+        dominant = Object.keys(expr).reduce((a, b) => expr[a] > expr[b] ? a : b);
+        intensity = expr[dominant];
+      }
 
-      // Calcular escala i marges per centrar el dibuix virtual a la pantalla
-      let scaleFactor = min(width / VIRTUAL_W, height / VIRTUAL_H);
-      let offsetX = (width - VIRTUAL_W * scaleFactor) / 2;
-      let offsetY = (height - VIRTUAL_H * scaleFactor) / 2;
+      // Calcular escala i marges per centrar el dibuix virtual a la pantalla
+      let scaleFactor = min(width / VIRTUAL_W, height / VIRTUAL_H);
+      let offsetX = (width - VIRTUAL_W * scaleFactor) / 2;
+      let offsetY = (height - VIRTUAL_H * scaleFactor) / 2;
 
-      // Aplicar transformacions per mantenir el dibuix centrat i escalat
-      push(); // desa l'estat de transformació
-      translate(offsetX, offsetY); // desplaça l'origen
-      scale(scaleFactor); // redimensiona proporcionalment
-      drawArt(dominant, intensity); // dibuixa la figura segons l'expressió
-      pop(); // recupera l'estat anterior
+      // Aplicar transformacions per mantenir el dibuix centrat i escalat
+      push(); // desa l'estat de transformació
+      translate(offsetX, offsetY); // desplaça l'origen
+      scale(scaleFactor); // redimensiona proporcionalment
+      drawArt(dominant, intensity); // dibuixa la figura segons l'expressió
+      pop(); // recupera l'estat anterior
 
-      // Mostra el text amb l'expressió dominant (fora de transformacions)
-      noStroke();
-      fill(44,169,225);
-      textSize(32);
-      textAlign(CENTER, TOP);
-      text("Expressió: " + dominant, width / 2, 10);
+      // Mostra el text amb l'expressió dominant (fora de transformacions)
+      noStroke();
+      fill(44,169,225);
+      textSize(32);
+      textAlign(CENTER, TOP);
+      text("Expressió: " + dominant, width / 2, 10);
 
-      // Mostra el vídeo si hi ha detecció
-      if (detections.length > 0) {
-        image(video, width - 140, height - 140, 120, 120);
-      }
-    }
+      // Mostra el vídeo si hi ha detecció
+      if (detections.length > 0) {
+        image(video, width - 140, height - 140, 120, 120);
+      }
+    }
 
-    // Dibuixa diferents figures depenent de l'estat emocional
-    function drawArt(dominant, intensity) {
-      noFill();
-      strokeWeight(4);
+    // Dibuixa diferents figures depenent de l'estat emocional
+    function drawArt(dominant, intensity) {
+      noFill();
+      strokeWeight(4);
 
-      switch (dominant) {
-        case 'happy':
-          stroke(255,0,0)
-  // Degradat suau de fons
-for (let y = 0; y < VIRTUAL_H; y++) {
-  let inter = map(y, 0, VIRTUAL_H, 0, 1);
-  let c = lerpColor(color(255, 255, 200), color(255, 180, 120), inter);
-  stroke(c);
-  line(0, y, VIRTUAL_W, y);
-}
+      switch (dominant) {
+        case 'neutral':
+          // Degradado de fondo: Colores neutros, grises y blancos suaves
+          for (let y = 0; y < VIRTUAL_H; y++) {
+            let inter = map(y, 0, VIRTUAL_H, 0, 1);
+            let c = lerpColor(color(230, 230, 230), color(200, 200, 200), inter);
+            stroke(c);
+            line(0, y, VIRTUAL_W, y);
+          }
 
-          // Cara
-fill(255, 220, 180); // tono de piel claro y cálido
-stroke(0);
-beginShape();
-// ... (todos los vertex de la cara)
-endShape();
-        beginShape();//cara 
-vertex(453, 246.1875);
-vertex(435, 262.1875);
-vertex(422, 272.1875);
-vertex(399, 282.1875);
-vertex(381, 287.1875);
-vertex(371, 296.1875);
-vertex(362, 314.1875);
-vertex(346, 334.1875);
-vertex(326, 343.1875);
-vertex(307, 351.1875);
-vertex(293, 351.1875);
-vertex(278, 348.1875);
-vertex(277, 361.1875);
-vertex(277, 378.1875);
-vertex(277, 407.1875);
-vertex(284, 425.1875);
-vertex(287, 441.1875);
-vertex(293, 453.1875);
-vertex(303, 460.1875);
-vertex(309, 468.1875);
-vertex(320, 474.1875);
-vertex(331, 479.1875);
-vertex(343, 479.1875);
-vertex(355, 477.1875);
-vertex(364, 471.1875);
-vertex(373, 462.1875);
-vertex(382, 456.1875);
-vertex(391, 452.1875);
-vertex(401, 441.1875);
-vertex(410, 426.1875);
-vertex(423, 421.1875);
-vertex(436, 416.1875);
-vertex(436, 400.1875);
-vertex(438, 377.1875);
-vertex(438, 361.1875);
-vertex(445, 352.1875);
-vertex(456, 335.1875);
-vertex(465, 320.1875);
-vertex(470, 299.1875);
-vertex(471, 274.1875);
-vertex(466, 256.1875);
-vertex(454, 246.1875);
-      endShape();
-       // Ull esquerre
-fill(255); // blanco del ojo
-stroke(0);
-beginShape();
-// ... (vertex del ojo)
-endShape();
-          beginShape();// ull esquerre
-vertex(414, 342.1875);
-vertex(403, 341.1875);
-vertex(392, 344.1875);
-vertex(392, 351.1875);
-vertex(399, 355.1875);
-vertex(408, 356.1875);
-vertex(413, 350.1875);
-vertex(414, 343.1875);
-endShape();
-          // Nas
-fill(255, 200, 170); // tono similar a la piel, un poco más oscuro
-stroke(0);
-beginShape();
-// ... (vertex del nas)
-endShape();
-          beginShape();//nas
-vertex(436, 343.1875);
-vertex(423, 357.1875);
-vertex(418, 368.1875);
-vertex(411, 386.1875);
-vertex(405, 395.1875);
-vertex(398, 404.1875);
-vertex(398, 413.1875);
-vertex(400, 420.1875);
-vertex(409, 423.1875);
-vertex(420, 423.1875);
-vertex(429, 423.1875);
-vertex(438, 419.1875);
-vertex(441, 408.1875);
-vertex(438, 367.1875);
-vertex(436, 348.1875);
-vertex(436, 344.1875);
-endShape();
-          // Cos
-fill(150, 200, 255); // azul claro alegre para la ropa
-stroke(0);
-beginShape();
-// ... (vertex del cos)
-endShape();
-         beginShape();//cos
-vertex(272, 342.1875);
-vertex(271, 364.1875);
-vertex(271, 384.1875);
-vertex(269, 400.1875);
-vertex(274, 415.1875);
-vertex(283, 436.1875);
-vertex(291, 454.1875);
-vertex(305, 468.1875);
-vertex(309, 474.1875);
-vertex(300, 484.1875);
-vertex(288, 498.1875);
-vertex(301, 515.1875);
-vertex(317, 539.1875);
-vertex(333, 561.1875);
-vertex(353, 582.1875);
-vertex(365, 601.1875);
-vertex(380, 621.1875);
-vertex(396, 646.1875);
-vertex(410, 672.1875);
-vertex(425, 692.1875);
-vertex(441, 722.1875);
-vertex(452, 741.1875);
-vertex(462, 757.1875);
-vertex(473, 772.1875);
-vertex(445, 774.1875);
-vertex(424, 774.1875);
-vertex(399, 774.1875);
-vertex(368, 774.1875);
-vertex(343, 774.1875);
-vertex(306, 776.1875);
-vertex(284, 774.1875);
-vertex(259, 772.1875);
-vertex(223, 773.1875);
-vertex(185, 774.1875);
-vertex(144, 772.1875);
-vertex(111, 774.1875);
-vertex(81, 773.1875);
-vertex(43, 773.1875);
-vertex(43, 773.1875);
-vertex(12, 770.1875);
-vertex(9, 756.1875);
-vertex(6, 727.1875);
-vertex(6, 710.1875);
-vertex(6, 682.1875);
-vertex(7, 662.1875);
-vertex(13, 644.1875);
-vertex(25, 620.1875);
-vertex(35, 594.1875);
-vertex(56, 565.1875);
-vertex(71, 544.1875);
-vertex(91, 523.1875);
-vertex(106, 506.1875);
-vertex(128, 483.1875);
-vertex(136, 471.1875);
-vertex(145, 457.1875);
-vertex(159, 444.1875);
-vertex(172, 429.1875);
-vertex(184, 414.1875);
-vertex(197, 415.1875);
-vertex(219, 399.1875);
-vertex(229, 384.1875);
-vertex(239, 370.1875);
-vertex(245, 351.1875);
-vertex(250, 332.1875);
-vertex(260, 337.1875);
-vertex(273, 344.1875);
-endShape();
-          // Cabell
-fill(255, 160, 0); // naranja brillante (pelirrojo alegre)
-stroke(0);
-beginShape();
-// ... (vertex del cabell)
-endShape();
-          
-beginShape();
-vertex(426, 266.1875);
-vertex(406, 286.1875);
-vertex(375, 311.1875);
-vertex(359, 320.1875);
-vertex(338, 336.1875);
-vertex(309, 346.1875);
-vertex(283, 346.1875);
-vertex(255, 335.1875);
-vertex(247, 346.1875);
-vertex(224, 357.1875);
-vertex(203, 353.1875);
-vertex(184, 343.1875);
-vertex(170, 325.1875);
-vertex(171, 306.1875);
-vertex(180, 272.1875);
-vertex(197, 256.1875);
-vertex(197, 233.1875);
-vertex(208, 213.1875);
-vertex(224, 199.1875);
-vertex(229, 185.1875);
-vertex(239, 174.1875);
-vertex(242, 155.1875);
-vertex(248, 130.1875);
-vertex(265, 108.1875);
-vertex(274, 88.1875);
-vertex(284, 71.1875);
-vertex(303, 65.1875);
-vertex(327, 65.1875);
-vertex(349, 74.1875);
-vertex(366, 84.1875);
-vertex(378, 102.1875);
-vertex(389, 129.1875);
-vertex(407, 147.1875);
-vertex(431, 159.1875);
-vertex(442, 174.1875);
-vertex(440, 197.1875);
-vertex(455, 203.1875);
-vertex(473, 219.1875);
-vertex(488, 234.1875);
-vertex(500, 260.1875);
-vertex(494, 285.1875);
-vertex(482, 301.1875);
-vertex(469, 310.1875);
-vertex(474, 285.1875);
-vertex(470, 262.1875);
-vertex(457, 241.1875);
-vertex(449, 247.1875);
-vertex(429, 263.1875);
-endShape();
-          // Llavis
-fill(255, 100, 150); // rosa fuerte
-stroke(0);
-beginShape();
-// ... (vertex dels llavis)
-endShape();
-          beginShape();//llavis
-vertex(402, 442.1875);
-vertex(391, 441.1875);
-vertex(379, 442.1875);
-vertex(368, 441.1875);
-vertex(372, 451.1875);
-vertex(377, 458.1875);
-vertex(385, 462.1875);
-vertex(393, 460.1875);
-vertex(393, 454.1875);
-vertex(401, 445.1875);
-endShape();
-                  // Cos
-fill(150, 200, 255); // azul claro alegre para la ropa
-stroke(0);
-beginShape();
-// ... (vertex del cos)
-endShape();
-          beginShape();// part del coll
-vertex(241, 365.1875);
-vertex(226, 387.1875);
-vertex(216, 404.1875);
-vertex(196, 414.1875);
-vertex(232, 444.1875);
-vertex(257, 470.1875);
-vertex(271, 492.1875);
-vertex(280, 501.1875);
-vertex(307, 474.1875);
-vertex(280, 430.1875);
-vertex(271, 383.1875);
-vertex(239, 361.1875);
-endShape();
-          endShape(CLOSE);
-          break;
+          // Formas: Cuadrado central estable con líneas horizontales
+          stroke(150, 150, 150, 180); // Gris semitransparente
+          rectMode(CENTER);
+          rect(VIRTUAL_W / 2, VIRTUAL_H / 2, 200, 200);
 
-        case 'sad':
-  // Degradat suau de fons (colors tristos: blau grisós)
-  for (let y = 0; y < VIRTUAL_H; y++) {
-    let inter = map(y, 0, VIRTUAL_H, 0, 1);
-    let c = lerpColor(color(180, 200, 230), color(100, 120, 160), inter);
-    stroke(c);
-    line(0, y, VIRTUAL_W, y);
-  }
+          stroke(180, 180, 180, 120); // Gris más claro
+          for (let i = 0; i < 5; i++) {
+            let yPos = VIRTUAL_H / 2 - 100 + i * 50;
+            line(VIRTUAL_W / 4, yPos, VIRTUAL_W * 3 / 4, yPos);
+          }
+          break;
 
-  // Cara
-  fill(220, 210, 200); // to de pell més apagat
-  stroke(0);
-  beginShape();
-  vertex(453, 246.1875);
-  vertex(435, 262.1875);
-  vertex(422, 272.1875);
-  vertex(399, 282.1875);
-  vertex(381, 287.1875);
-  vertex(371, 296.1875);
-  vertex(362, 314.1875);
-  vertex(346, 334.1875);
-  vertex(326, 343.1875);
-  vertex(307, 351.1875);
-  vertex(293, 351.1875);
-  vertex(278, 348.1875);
-  vertex(277, 361.1875);
-  vertex(277, 378.1875);
-  vertex(277, 407.1875);
-  vertex(284, 425.1875);
-  vertex(287, 441.1875);
-  vertex(293, 453.1875);
-  vertex(303, 460.1875);
-  vertex(309, 468.1875);
-  vertex(320, 474.1875);
-  vertex(331, 479.1875);
-  vertex(343, 479.1875);
-  vertex(355, 477.1875);
-  vertex(364, 471.1875);
-  vertex(373, 462.1875);
-  vertex(382, 456.1875);
-  vertex(391, 452.1875);
-  vertex(401, 441.1875);
-  vertex(410, 426.1875);
-  vertex(423, 421.1875);
-  vertex(436, 416.1875);
-  vertex(436, 400.1875);
-  vertex(438, 377.1875);
-  vertex(438, 361.1875);
-  vertex(445, 352.1875);
-  vertex(456, 335.1875);
-  vertex(465, 320.1875);
-  vertex(470, 299.1875);
-  vertex(471, 274.1875);
-  vertex(466, 256.1875);
-  vertex(454, 246.1875);
-  endShape();
+        case 'happy':
+          // Degradado de fondo: Colores cálidos y vibrantes, naranjas a amarillos
+          for (let y = 0; y < VIRTUAL_H; y++) {
+            let inter = map(y, 0, VIRTUAL_H, 0, 1);
+            let c = lerpColor(color(255, 200, 0), color(255, 100, 0), inter);
+            stroke(c);
+            line(0, y, VIRTUAL_W, y);
+          }
 
-  // Ull esquerre
-  fill(255);
-  stroke(0);
-  beginShape();
-  vertex(414, 342.1875);
-  vertex(403, 341.1875);
-  vertex(392, 344.1875);
-  vertex(392, 351.1875);
-  vertex(399, 355.1875);
-  vertex(408, 356.1875);
-  vertex(413, 350.1875);
-  vertex(414, 343.1875);
-  endShape();
+          // Formas: Círculos expansivos y líneas curvas ascendentes (más grandes con intensidad)
+          stroke(255, 160, 0, 200 + intensity * 55); // Aumenta opacidad con intensidad
+          for (let i = 0; i < 3; i++) {
+            let radius = 50 + intensity * 200 * (i + 1) / 3; // Radio más grande
+            ellipse(VIRTUAL_W / 2, VIRTUAL_H / 2, radius, radius);
+          }
 
-  // Llàgrima sota l'ull esquerre
-  noStroke();
-  fill(100, 150, 255, 180);
-  ellipse(400, 370, 8, 12);
+          stroke(255, 255, 0, 150 + intensity * 100); // Aumenta opacidad con intensidad
+          for (let i = 0; i < 7; i++) { // Más líneas
+            let startX = VIRTUAL_W / 2 - 150 + i * 50; // Más dispersas
+            let startY = VIRTUAL_H / 2 + 80;
+            let endX = startX + random(-10, 10); // Ligeramente más erráticas
+            let endY = VIRTUAL_H / 2 - 80 - intensity * 100; // Más pronunciadas
+            line(startX, startY, endX, endY);
+          }
+          break;
 
-  // Cella esquerra trista
-  stroke(0);
-  strokeWeight(3);
-  noFill();
-  beginShape();
-  vertex(390, 330);
-  vertex(405, 328);
-  endShape();
-  strokeWeight(1);
+        case 'sad':
+          // Degradado de fondo: Colores fríos y apagados, azules a grises
+          for (let y = 0; y < VIRTUAL_H; y++) {
+            let inter = map(y, 0, VIRTUAL_H, 0, 1);
+            let c = lerpColor(color(100, 150, 200), color(50, 80, 120), inter);
+            stroke(c);
+            line(0, y, VIRTUAL_W, y);
+          }
 
-  // Nas
-  fill(210, 180, 170);
-  stroke(0);
-  beginShape();
-  vertex(436, 343.1875);
-  vertex(423, 357.1875);
-  vertex(418, 368.1875);
-  vertex(411, 386.1875);
-  vertex(405, 395.1875);
-  vertex(398, 404.1875);
-  vertex(398, 413.1875);
-  vertex(400, 420.1875);
-  vertex(409, 423.1875);
-  vertex(420, 423.1875);
-  vertex(429, 423.1875);
-  vertex(438, 419.1875);
-  vertex(441, 408.1875);
-  vertex(438, 367.1875);
-  vertex(436, 348.1875);
-  vertex(436, 344.1875);
-  endShape();
+          // Formas: Líneas descendentes y óvalos alargados (más profundas y deformes con intensidad)
+          stroke(50, 100, 150, 180 + intensity * 75); // Aumenta opacidad
+          for (let i = 0; i < 10; i++) { // Más líneas
+            let x = VIRTUAL_W / 4 + i * (VIRTUAL_W / 12);
+            let y1 = VIRTUAL_H / 3 + intensity * 80; // Caída más pronunciada
+            let y2 = VIRTUAL_H * 2 / 3 - intensity * 80;
+            line(x, y1, x, y2);
+          }
 
-  // Cos
-  fill(100, 130, 180); // blau apagat
-  stroke(0);
-  beginShape();
-  vertex(272, 342.1875);
-  vertex(271, 364.1875);
-  vertex(271, 384.1875);
-  vertex(269, 400.1875);
-  vertex(274, 415.1875);
-  vertex(283, 436.1875);
-  vertex(291, 454.1875);
-  vertex(305, 468.1875);
-  vertex(309, 474.1875);
-  vertex(300, 484.1875);
-  vertex(288, 498.1875);
-  vertex(301, 515.1875);
-  vertex(317, 539.1875);
-  vertex(333, 561.1875);
-  vertex(353, 582.1875);
-  vertex(365, 601.1875);
-  vertex(380, 621.1875);
-  vertex(396, 646.1875);
-  vertex(410, 672.1875);
-  vertex(425, 692.1875);
-  vertex(441, 722.1875);
-  vertex(452, 741.1875);
-  vertex(462, 757.1875);
-  vertex(473, 772.1875);
-  vertex(445, 774.1875);
-  vertex(424, 774.1875);
-  vertex(399, 774.1875);
-  vertex(368, 774.1875);
-  vertex(343, 774.1875);
-  vertex(306, 776.1875);
-  vertex(284, 774.1875);
-  vertex(259, 772.1875);
-  vertex(223, 773.1875);
-  vertex(185, 774.1875);
-  vertex(144, 772.1875);
-  vertex(111, 774.1875);
-  vertex(81, 773.1875);
-  vertex(43, 773.1875);
-  vertex(12, 770.1875);
-  vertex(9, 756.1875);
-  vertex(6, 727.1875);
-  vertex(6, 710.1875);
-  vertex(6, 682.1875);
-  vertex(7, 662.1875);
-  vertex(13, 644.1875);
-  vertex(25, 620.1875);
-  vertex(35, 594.1875);
-  vertex(56, 565.1875);
-  vertex(71, 544.1875);
-  vertex(91, 523.1875);
-  vertex(106, 506.1875);
-  vertex(128, 483.1875);
-  vertex(136, 471.1875);
-  vertex(145, 457.1875);
-  vertex(159, 444.1875);
-  vertex(172, 429.1875);
-  vertex(184, 414.1875);
-  vertex(197, 415.1875);
-  vertex(219, 399.1875);
-  vertex(229, 384.1875);
-  vertex(239, 370.1875);
-  vertex(245, 351.1875);
-  vertex(250, 332.1875);
-  vertex(260, 337.1875);
-  vertex(273, 344.1875);
-  endShape();
+          stroke(80, 130, 180, 100 + intensity * 100); // Aumenta opacidad
+          ellipse(VIRTUAL_W / 2, VIRTUAL_H / 2 + 50 + intensity * 50, 100 + intensity * 50, 50 + intensity * 120); // Más alargado y bajo
+          break;
 
-  // Cabell
-  fill(100, 80, 60); // marró apagat
-  stroke(0);
-  beginShape();
-  vertex(426, 266.1875);
-  vertex(406, 286.1875);
-  vertex(375, 311.1875);
-  vertex(359, 320.1875);
-  vertex(338, 336.1875);
-  vertex(309, 346.1875);
-  vertex(283, 346.1875);
-  vertex(255, 335.1875);
-  vertex(247, 346.1875);
-  vertex(224, 357.1875);
-  vertex(203, 353.1875);
-  vertex(184, 343.1875);
-  vertex(170, 325.1875);
-  vertex(171, 306.1875);
-  vertex(180, 272.1875);
-  vertex(197, 256.1875);
-  vertex(197, 233.1875);
-  vertex(208, 213.1875);
-  vertex(224, 199.1875);
-  vertex(229, 185.1875);
-  vertex(239, 174.1875);
-  vertex(242, 155.1875);
-  vertex(248, 130.1875);
-  vertex(265, 108.1875);
-  vertex(274, 88.1875);
-  vertex(284, 71.1875);
-  vertex(303, 65.1875);
-  vertex(327, 65.1875);
-  vertex(349, 74.1875);
-  vertex(366, 84.1875);
-  vertex(378, 102.1875);
-  vertex(389, 129.1875);
-  vertex(407, 147.1875);
-  vertex(431, 159.1875);
-  vertex(442, 174.1875);
-  vertex(440, 197.1875);
-  vertex(455, 203.1875);
-  vertex(473, 219.1875);
-  vertex(488, 234.1875);
-  vertex(500, 260.1875);
-  vertex(494, 285.1875);
-  vertex(482, 301.1875);
-  vertex(469, 310.1875);
-  vertex(474, 285.1875);
-  vertex(470, 262.1875);
-  vertex(457, 241.1875);
-  vertex(449, 247.1875);
-  vertex(429, 263.1875);
-  endShape();
+        case 'angry':
+          // Degradado de fondo: Colores intensos y agresivos, rojos a negros (más oscuros con intensidad)
+          for (let y = 0; y < VIRTUAL_H; y++) {
+            let inter = map(y, 0, VIRTUAL_H, 0, 1);
+            let c = lerpColor(color(200, 0, 0), color(50 - intensity * 50, 0, 0), inter); // Fondo más oscuro
+            stroke(c);
+            line(0, y, VIRTUAL_W, y);
+          }
 
-  // Llavis tristos (línia corba cap avall)
-  fill(180, 100, 120);
-  stroke(0);
-  beginShape();
-  vertex(402, 442.1875);
-  vertex(393, 445.1875);
-  vertex(385, 447.1875);
-  vertex(377, 445.1875);
-  vertex(368, 441.1875);
-  endShape(CLOSE);
-          break;
+          // Formas: Picos afilados y líneas que se cruzan (más grandes y más líneas con intensidad)
+          stroke(255, 50, 50, 200 + intensity * 55); // Aumenta opacidad
+          noFill();
+          beginShape();
+          for (let i = 0; i < 20; i++) { // Más vértices para más picos
+            let angle = map(i, 0, 20, 0, TWO_PI);
+            let r = i % 2 === 0 ? 100 : 100 + intensity * 120; // Picos mucho más largos
+            let x = VIRTUAL_W / 2 + r * cos(angle);
+            let y = VIRTUAL_H / 2 + r * sin(angle);
+            vertex(x, y);
+          }
+          endShape(CLOSE);
 
-       case 'surprised':
-  // Degradat suau de fons (colors sorpresos: groc clar a blau clar)
-  for (let y = 0; y < VIRTUAL_H; y++) {
-    let inter = map(y, 0, VIRTUAL_H, 0, 1);
-    let c = lerpColor(color(255, 255, 150), color(150, 200, 255), inter);
-    stroke(c);
-    line(0, y, VIRTUAL_W, y);
-  }
+          stroke(0, 0, 0, 150 + intensity * 100); // Aumenta opacidad
+          strokeWeight(4 + intensity * 4); // Más grosor
+          line(VIRTUAL_W / 4 - intensity * 50, VIRTUAL_H / 4 - intensity * 50, VIRTUAL_W * 3 / 4 + intensity * 50, VIRTUAL_H * 3 / 4 + intensity * 50);
+          line(VIRTUAL_W * 3 / 4 + intensity * 50, VIRTUAL_H / 4 - intensity * 50, VIRTUAL_W / 4 - intensity * 50, VIRTUAL_H * 3 / 4 + intensity * 50);
+          break;
 
-  // Cara
-  fill(255, 220, 180); // To de pell normal
-  stroke(0);
-  beginShape();
-  vertex(453, 246.1875);
-  vertex(435, 262.1875);
-  vertex(422, 272.1875);
-  vertex(399, 282.1875);
-  vertex(381, 287.1875);
-  vertex(371, 296.1875);
-  vertex(362, 314.1875);
-  vertex(346, 334.1875);
-  vertex(326, 343.1875);
-  vertex(307, 351.1875);
-  vertex(293, 351.1875);
-  vertex(278, 348.1875);
-  vertex(277, 361.1875);
-  vertex(277, 378.1875);
-  vertex(277, 407.1875);
-  vertex(284, 425.1875);
-  vertex(287, 441.1875);
-  vertex(293, 453.1875);
-  vertex(303, 460.1875);
-  vertex(309, 468.1875);
-  vertex(320, 474.1875);
-  vertex(331, 479.1875);
-  vertex(343, 479.1875);
-  vertex(355, 477.1875);
-  vertex(364, 471.1875);
-  vertex(373, 462.1875);
-  vertex(382, 456.1875);
-  vertex(391, 452.1875);
-  vertex(401, 441.1875);
-  vertex(410, 426.1875);
-  vertex(423, 421.1875);
-  vertex(436, 416.1875);
-  vertex(436, 400.1875);
-  vertex(438, 377.1875);
-  vertex(438, 361.1875);
-  vertex(445, 352.1875);
-  vertex(456, 335.1875);
-  vertex(465, 320.1875);
-  vertex(470, 299.1875);
-  vertex(471, 274.1875);
-  vertex(466, 256.1875);
-  vertex(454, 246.1875);
-  endShape();
+        case 'fearful':
+          // Degradado de fondo: Colores oscuros y fríos, morados a grises (más oscuros y vibrantes con intensidad)
+          for (let y = 0; y < VIRTUAL_H; y++) {
+            let inter = map(y, 0, VIRTUAL_H, 0, 1);
+            let c = lerpColor(color(80 + intensity * 50, 0, 120 + intensity * 50), color(100, 100, 100), inter);
+            stroke(c);
+            line(0, y, VIRTUAL_W, y);
+          }
 
-  // Ull esquerre (obert per sorpresa)
-  fill(255); // blanco del ojo
-  stroke(0);
-  beginShape();
-  vertex(414, 342.1875);
-  vertex(403, 341.1875);
-  vertex(392, 344.1875);
-  vertex(392, 351.1875);
-  vertex(399, 355.1875);
-  vertex(408, 356.1875);
-  vertex(413, 350.1875);
-  vertex(414, 343.1875);
-  endShape();
+          // Formas: Líneas rotas y puntos dispersos que se alejan (más erráticas y numerosos con intensidad)
+          noFill();
+          stroke(150, 100, 200, 180 + intensity * 75); // Aumenta opacidad
+          strokeWeight(4 + intensity * 2); // Más grosor
+          beginShape();
+          for (let i = 0; i < 15; i++) { // Más puntos en la línea
+            let x = map(i, 0, 14, 0, VIRTUAL_W);
+            let y = VIRTUAL_H / 2 + random(-80, 80) * intensity * 1.5; // Líneas mucho más erráticas
+            vertex(x, y);
+          }
+          endShape();
 
-  // Celles aixecades (sorpresa)
-  stroke(0);
-  strokeWeight(3);
-  noFill();
-  beginShape();
-  vertex(390, 310);
-  vertex(405, 308);
-  endShape();
-  strokeWeight(1);
+          fill(200, 150, 255, 100 + intensity * 100); // Aumenta opacidad
+          noStroke();
+          for (let i = 0; i < 50 * intensity; i++) { // Muchos más puntos
+            ellipse(random(VIRTUAL_W), random(VIRTUAL_H), 5 + intensity * 5, 5 + intensity * 5); // Puntos más grandes
+          }
+          break;
 
-  // Nas
-  fill(255, 200, 170);
-  stroke(0);
-  beginShape();
-  vertex(436, 343.1875);
-  vertex(423, 357.1875);
-  vertex(418, 368.1875);
-  vertex(411, 386.1875);
-  vertex(405, 395.1875);
-  vertex(398, 404.1875);
-  vertex(398, 413.1875);
-  vertex(400, 420.1875);
-  vertex(409, 423.1875);
-  vertex(420, 423.1875);
-  vertex(429, 423.1875);
-  vertex(438, 419.1875);
-  vertex(441, 408.1875);
-  vertex(438, 367.1875);
-  vertex(436, 348.1875);
-  vertex(436, 344.1875);
-  endShape();
+        case 'surprised':
+          // Degradado de fondo: Colores brillantes y en expansión, azules claros a blancos (más brillantes con intensidad)
+          for (let y = 0; y < VIRTUAL_H; y++) {
+            let inter = map(y, 0, VIRTUAL_H, 0, 1);
+            let c = lerpColor(color(100, 200, 255), color(200 + intensity * 55, 240 + intensity * 15, 255), inter); // Fondo más brillante
+            stroke(c);
+            line(0, y, VIRTUAL_W, y);
+          }
 
-  // Cos
-  fill(150, 200, 255);
-  stroke(0);
-  beginShape();
-  vertex(272, 342.1875);
-  vertex(271, 364.1875);
-  vertex(271, 384.1875);
-  vertex(269, 400.1875);
-  vertex(274, 415.1875);
-  vertex(283, 436.1875);
-  vertex(291, 454.1875);
-  vertex(305, 468.1875);
-  vertex(309, 474.1875);
-  vertex(300, 484.1875);
-  vertex(288, 498.1875);
-  vertex(301, 515.1875);
-  vertex(317, 539.1875);
-  vertex(333, 561.1875);
-  vertex(353, 582.1875);
-  vertex(365, 601.1875);
-  vertex(380, 621.1875);
-  vertex(396, 646.1875);
-  vertex(410, 672.1875);
-  vertex(425, 692.1875);
-  vertex(441, 722.1875);
-  vertex(452, 741.1875);
-  vertex(462, 757.1875);
-  vertex(473, 772.1875);
-  vertex(445, 774.1875);
-  vertex(424, 774.1875);
-  vertex(399, 774.1875);
-  vertex(368, 774.1875);
-  vertex(343, 774.1875);
-  vertex(306, 776.1875);
-  vertex(284, 774.1875);
-  vertex(259, 772.1875);
-  vertex(223, 773.1875);
-  vertex(185, 774.1875);
-  vertex(144, 772.1875);
-  vertex(111, 774.1875);
-  vertex(81, 773.1875);
-  vertex(43, 773.1875);
-  vertex(12, 770.1875);
-  vertex(9, 756.1875);
-  vertex(6, 727.1875);
-  vertex(6, 710.1875);
-  vertex(6, 682.1875);
-  vertex(7, 662.1875);
-  vertex(13, 644.1875);
-  vertex(25, 620.1875);
-  vertex(35, 594.1875);
-  vertex(56, 565.1875);
-  vertex(71, 544.1875);
-  vertex(91, 523.1875);
-  vertex(106, 506.1875);
-  vertex(128, 483.1875);
-  vertex(136, 471.1875);
-  vertex(145, 457.1875);
-  vertex(159, 444.1875);
-  vertex(172, 429.1875);
-  vertex(184, 414.1875);
-  vertex(197, 415.1875);
-  vertex(219, 399.1875);
-  vertex(229, 384.1875);
-  vertex(239, 370.1875);
-  vertex(245, 351.1875);
-  vertex(250, 332.1875);
-  vertex(260, 337.1875);
-  vertex(273, 344.1875);
-  endShape();
+          // Formas: Espirales o anillos que se expanden rápidamente (más grandes y rápidos con intensidad)
+          noFill();
+          stroke(0, 150, 255, 200 + intensity * 55); // Aumenta opacidad
+          strokeWeight(4 + intensity * 2); // Más grosor
+          for (let i = 0; i < 20; i++) { // Más anillos
+            let angle = i * 0.4 + frameCount * 0.1 * intensity; // Animación más rápida
+            let r = 20 * i + intensity * 150; // Más grandes
+            let x = VIRTUAL_W / 2 + r * cos(angle);
+            let y = VIRTUAL_H / 2 + r * sin(angle);
+            ellipse(x, y, 10 + intensity * 10, 10 + intensity * 10); // Círculos más grandes
+          }
+          break;
 
-  // Cabell
-  fill(255, 160, 0);
-  stroke(0);
-  beginShape();
-  vertex(426, 266.1875);
-  vertex(406, 286.1875);
-  vertex(375, 311.1875);
-  vertex(359, 320.1875);
-  vertex(338, 336.1875);
-  vertex(309, 346.1875);
-  vertex(283, 346.1875);
-  vertex(255, 335.1875);
-  vertex(247, 346.1875);
-  vertex(224, 357.1875);
-  vertex(203, 353.1875);
-  vertex(184, 343.1875);
-  vertex(170, 325.1875);
-  vertex(171, 306.1875);
-  vertex(180, 272.1875);
-  vertex(197, 256.1875);
-  vertex(197, 233.1875);
-  vertex(208, 213.1875);
-  vertex(224, 199.1875);
-  vertex(229, 185.1875);
-  vertex(239, 174.1875);
-  vertex(242, 155.1875);
-  vertex(248, 130.1875);
-  vertex(265, 108.1875);
-  vertex(274, 88.1875);
-  vertex(284, 71.1875);
-  vertex(303, 65.1875);
-  vertex(327, 65.1875);
-  vertex(349, 74.1875);
-  vertex(366, 84.1875);
-  vertex(378, 102.1875);
-  vertex(389, 129.1875);
-  vertex(407, 147.1875);
-  vertex(431, 159.1875);
-  vertex(442, 174.1875);
-  vertex(440, 197.1875);
-  vertex(455, 203.1875);
-  vertex(473, 219.1875);
-  vertex(488, 234.1875);
-  vertex(500, 260.1875);
-  vertex(494, 285.1875);
-  vertex(482, 301.1875);
-  vertex(469, 310.1875);
-  vertex(474, 285.1875);
-  vertex(470, 262.1875);
-  vertex(457, 241.1875);
-  vertex(449, 247.1875);
-  vertex(429, 263.1875);
-  endShape();
+        case 'disgusted':
+          // Degradado de fondo: Colores nauseabundos, verdes a marrones (más saturados y oscuros con intensidad)
+          for (let y = 0; y < VIRTUAL_H; y++) {
+            let inter = map(y, 0, VIRTUAL_H, 0, 1);
+            let c = lerpColor(color(80, 120 + intensity * 50, 60), color(60, 40, 20), inter); // Verde más vivo
+            stroke(c);
+            line(0, y, VIRTUAL_W, y);
+          }
 
-  // Llavis (boca oberta en "O")
-  fill(255, 100, 150);
-  stroke(0);
-  ellipse(385, 450, 40, 50); // Boca més gran i arrodonida per sorpresa
-          break;
-      case 'angry':
-  // Degradat de fons amb colors foscos i càlids (vermells, marrons, grisos)
-  for (let y = 0; y < VIRTUAL_H; y++) {
-    let inter = map(y, 0, VIRTUAL_H, 0, 1);
-    let c = lerpColor(color(150, 50, 50), color(80, 0, 0), inter); // Vermell fosc a gairebé negre
-    stroke(c);
-    line(0, y, VIRTUAL_W, y);
-  }
+          // Formas: Formas irregulares y distorsionadas, con un centro denso (más deformes y con más "manchas" con intensidad)
+          fill(50, 100 + intensity * 50, 50, 150 + intensity * 100); // Verde más saturado y opaco
+          stroke(30, 80 + intensity * 50, 30, 200 + intensity * 55); // Verde más oscuro y opaco
+          strokeWeight(4 + intensity * 4); // Más grosor
+          beginShape();
+          for (let i = 0; i < 25; i++) { // Más puntos en la forma
+            let angle = map(i, 0, 25, 0, TWO_PI);
+            let r = 80 + random(-60, 60) * intensity * 2; // Radio más irregular y exagerado
+            let x = VIRTUAL_W / 2 + r * cos(angle);
+            let y = VIRTUAL_H / 2 + r * sin(angle);
+            curveVertex(x, y);
+          }
+          endShape(CLOSE);
 
-  // Cara
-  fill(200, 150, 150); // To de pell enrogit
-  stroke(0);
-  beginShape();
-  vertex(453, 246.1875);
-  vertex(435, 262.1875);
-  vertex(422, 272.1875);
-  vertex(399, 282.1875);
-  vertex(381, 287.1875);
-  vertex(371, 296.1875);
-  vertex(362, 314.1875);
-  vertex(346, 334.1875);
-  vertex(326, 343.1875);
-  vertex(307, 351.1875);
-  vertex(293, 351.1875);
-  vertex(278, 348.1875);
-  vertex(277, 361.1875);
-  vertex(277, 378.1875);
-  vertex(277, 407.1875);
-  vertex(284, 425.1875);
-  vertex(287, 441.1875);
-  vertex(293, 453.1875);
-  vertex(303, 460.1875);
-  vertex(309, 468.1875);
-  vertex(320, 474.1875);
-  vertex(331, 479.1875);
-  vertex(343, 479.1875);
-  vertex(355, 477.1875);
-  vertex(364, 471.1875);
-  vertex(373, 462.1875);
-  vertex(382, 456.1875);
-  vertex(391, 452.1875);
-  vertex(401, 441.1875);
-  vertex(410, 426.1875);
-  vertex(423, 421.1875);
-  vertex(436, 416.1875);
-  vertex(436, 400.1875);
-  vertex(438, 377.1875);
-  vertex(438, 361.1875);
-  vertex(445, 352.1875);
-  vertex(456, 335.1875);
-  vertex(465, 320.1875);
-  vertex(470, 299.1875);
-  vertex(471, 274.1875);
-  vertex(466, 256.1875);
-  vertex(454, 246.1875);
-  endShape();
+          // Líneas cortas y dispersas que simulan "repulsión" (más numerosas y gruesas)
+          stroke(0, 0, 0, 100 + intensity * 150); // Más opacas
+          strokeWeight(2 + intensity * 4); // Mucho más grosor
+          for (let i = 0; i < 40 * intensity; i++) { // Muchas más líneas
+            let x1 = random(VIRTUAL_W);
+            let y1 = random(VIRTUAL_H);
+            let x2 = x1 + random(-30, 30) * intensity; // Más largas
+            let y2 = y1 + random(-30, 30) * intensity;
+            line(x1, y1, x2, y2);
+          }
+          break;
 
-  // Ull esquerre (iris vermell per la ràbia)
-  fill(255);
-  stroke(0);
-  beginShape();
-  vertex(414, 342.1875);
-  vertex(403, 341.1875);
-  vertex(392, 344.1875);
-  vertex(392, 351.1875);
-  vertex(399, 355.1875);
-  vertex(408, 356.1875);
-  vertex(413, 350.1875);
-  vertex(414, 343.1875);
-  endShape();
-  fill(180, 0, 0); // Iris vermell
-  ellipse(403, 348, 8, 8); // Ajusta la posició de l'iris si cal
-
-  // Celles enfadades (inclinades cap avall i endins)
-  stroke(0);
-  strokeWeight(4);
-  noFill();
-  line(390, 330, 405, 335); // Cella esquerra
-  strokeWeight(1);
-
-  // Nas
-  fill(200, 150, 140);
-  stroke(0);
-  beginShape();
-  vertex(436, 343.1875);
-  vertex(423, 357.1875);
-  vertex(418, 368.1875);
-  vertex(411, 386.1875);
-  vertex(405, 395.1875);
-  vertex(398, 404.1875);
-  vertex(398, 413.1875);
-  vertex(400, 420.1875);
-  vertex(409, 423.1875);
-  vertex(420, 423.1875);
-  vertex(429, 423.1875);
-  vertex(438, 419.1875);
-  vertex(441, 408.1875);
-  vertex(438, 367.1875);
-  vertex(436, 348.1875);
-  vertex(436, 344.1875);
-  endShape();
-
-  // Cos
-  fill(100, 50, 50); // Roba de colors foscos
-  stroke(0);
-  beginShape();
-  vertex(272, 342.1875);
-  vertex(271, 364.1875);
-  vertex(271, 384.1875);
-  vertex(269, 400.1875);
-  vertex(274, 415.1875);
-  vertex(283, 436.1875);
-  vertex(291, 454.1875);
-  vertex(305, 468.1875);
-  vertex(309, 474.1875);
-  vertex(300, 484.1875);
-  vertex(288, 498.1875);
-  vertex(301, 515.1875);
-  vertex(317, 539.1875);
-  vertex(333, 561.1875);
-  vertex(353, 582.1875);
-  vertex(365, 601.1875);
-  vertex(380, 621.1875);
-  vertex(396, 646.1875);
-  vertex(410, 672.1875);
-  vertex(425, 692.1875);
-  vertex(441, 722.1875);
-  vertex(452, 741.1875);
-  vertex(462, 757.1875);
-  vertex(473, 772.1875);
-  vertex(445, 774.1875);
-  vertex(424, 774.1875);
-  vertex(399, 774.1875);
-  vertex(368, 774.1875);
-  vertex(343, 774.1875);
-  vertex(306, 776.1875);
-  vertex(284, 774.1875);
-  vertex(259, 772.1875);
-  vertex(223, 773.1875);
-  vertex(185, 774.1875);
-  vertex(144, 772.1875);
-  vertex(111, 774.1875);
-  vertex(81, 773.1875);
-  vertex(43, 773.1875);
-  vertex(12, 770.1875);
-  vertex(9, 756.1875);
-  vertex(6, 727.1875);
-  vertex(6, 710.1875);
-  vertex(6, 682.1875);
-  vertex(7, 662.1875);
-  vertex(13, 644.1875);
-  vertex(25, 620.1875);
-  vertex(35, 594.1875);
-  vertex(56, 565.1875);
-  vertex(71, 544.1875);
-  vertex(91, 523.1875);
-  vertex(106, 506.1875);
-  vertex(128, 483.1875);
-  vertex(136, 471.1875);
-  vertex(145, 457.1875);
-  vertex(159, 444.1875);
-  vertex(172, 429.1875);
-  vertex(184, 414.1875);
-  vertex(197, 415.1875);
-  vertex(219, 399.1875);
-  vertex(229, 384.1875);
-  vertex(239, 370.1875);
-  vertex(245, 351.1875);
-  vertex(250, 332.1875);
-  vertex(260, 337.1875);
-  vertex(273, 344.1875);
-  endShape();
-
-  // Cabell
-  fill(50, 30, 20); // Marró molt fosc, gairebé negre
-  stroke(0);
-  beginShape();
-  vertex(426, 266.1875);
-  vertex(406, 286.1875);
-  vertex(375, 311.1875);
-  vertex(359, 320.1875);
-  vertex(338, 336.1875);
-  vertex(309, 346.1875);
-  vertex(283, 346.1875);
-  vertex(255, 335.1875);
-  vertex(247, 346.1875);
-  vertex(224, 357.1875);
-  vertex(203, 353.1875);
-  vertex(184, 343.1875);
-  vertex(170, 325.1875);
-  vertex(171, 306.1875);
-  vertex(180, 272.1875);
-  vertex(197, 256.1875);
-  vertex(197, 233.1875);
-  vertex(208, 213.1875);
-  vertex(224, 199.1875);
-  vertex(229, 185.1875);
-  vertex(239, 174.1875);
-  vertex(242, 155.1875);
-  vertex(248, 130.1875);
-  vertex(265, 108.1875);
-  vertex(274, 88.1875);
-  vertex(284, 71.1875);
-  vertex(303, 65.1875);
-  vertex(327, 65.1875);
-  vertex(349, 74.1875);
-  vertex(366, 84.1875);
-  vertex(378, 102.1875);
-  vertex(389, 129.1875);
-  vertex(407, 147.1875);
-  vertex(431, 159.1875);
-  vertex(442, 174.1875);
-  vertex(440, 197.1875);
-  vertex(455, 203.1875);
-  vertex(473, 219.1875);
-  vertex(488, 234.1875);
-  vertex(500, 260.1875);
-  vertex(494, 285.1875);
-  vertex(482, 301.1875);
-  vertex(469, 310.1875);
-  vertex(474, 285.1875);
-  vertex(470, 262.1875);
-  vertex(457, 241.1875);
-  vertex(449, 247.1875);
-  vertex(429, 263.1875);
-  endShape();
-
-  // Llavis (boca tancada, recta i tensa)
-  fill(180, 50, 50); // Vermell fosc
-  stroke(0);
-  line(370, 455, 400, 455); // Línia recta per la boca
-          break;
-
-          case 'neutral':
-          // Degradat suau de fons (colors neutres: gris clar a gris fosc)
-          for (let y = 0; y < VIRTUAL_H; y++) {
-            let inter = map(y, 0, VIRTUAL_H, 0, 1);
-            let c = lerpColor(color(220, 220, 220), color(150, 150, 150), inter);
-            stroke(c);
-            line(0, y, VIRTUAL_W, y);
-          }
-
-          // Cara
-          fill(255, 220, 180); // To de pell normal
-          stroke(0);
-          beginShape();
-          vertex(453, 246.1875);
-          vertex(435, 262.1875);
-          vertex(422, 272.1875);
-          vertex(399, 282.1875);
-          vertex(381, 287.1875);
-          vertex(371, 296.1875);
-          vertex(362, 314.1875);
-          vertex(346, 334.1875);
-          vertex(326, 343.1875);
-          vertex(307, 351.1875);
-          vertex(293, 351.1875);
-          vertex(278, 348.1875);
-          vertex(277, 361.1875);
-          vertex(277, 378.1875);
-          vertex(277, 407.1875);
-          vertex(284, 425.1875);
-          vertex(287, 441.1875);
-          vertex(293, 453.1875);
-          vertex(303, 460.1875);
-          vertex(309, 468.1875);
-          vertex(320, 474.1875);
-          vertex(331, 479.1875);
-          vertex(343, 479.1875);
-          vertex(355, 477.1875);
-          vertex(364, 471.1875);
-          vertex(373, 462.1875);
-          vertex(382, 456.1875);
-          vertex(391, 452.1875);
-          vertex(401, 441.1875);
-          vertex(410, 426.1875);
-          vertex(423, 421.1875);
-          vertex(436, 416.1875);
-          vertex(436, 400.1875);
-          vertex(438, 377.1875);
-          vertex(438, 361.1875);
-          vertex(445, 352.1875);
-          vertex(456, 335.1875);
-          vertex(465, 320.1875);
-          vertex(470, 299.1875);
-          vertex(471, 274.1875);
-          vertex(466, 256.1875);
-          vertex(454, 246.1875);
-          endShape();
-
-          // Ull esquerre
-          fill(255);
-          stroke(0);
-          beginShape();
-          vertex(414, 342.1875);
-          vertex(403, 341.1875);
-          vertex(392, 344.1875);
-          vertex(392, 351.1875);
-          vertex(399, 355.1875);
-          vertex(408, 356.1875);
-          vertex(413, 350.1875);
-          vertex(414, 343.1875);
-          endShape();
-          fill(0); // Iris
-          ellipse(403, 348, 8, 8); // Ajusta la posició de l'iris si cal
-
-          // Celles neutres (línia recta)
-          stroke(0);
-          strokeWeight(2);
-          line(390, 330, 405, 330); // Cella esquerra
-          strokeWeight(1);
-
-          // Nas
-          fill(255, 200, 170);
-          stroke(0);
-          beginShape();
-          vertex(436, 343.1875);
-          vertex(423, 357.1875);
-          vertex(418, 368.1875);
-          vertex(411, 386.1875);
-          vertex(405, 395.1875);
-          vertex(398, 404.1875);
-          vertex(398, 413.1875);
-          vertex(400, 420.1875);
-          vertex(409, 423.1875);
-          vertex(420, 423.1875);
-          vertex(429, 423.1875);
-          vertex(438, 419.1875);
-          vertex(441, 408.1875);
-          vertex(438, 367.1875);
-          vertex(436, 348.1875);
-          vertex(436, 344.1875);
-          endShape();
-
-          // Cos
-          fill(180, 200, 220); // Colors blaus-grisos suaus
-          stroke(0);
-          beginShape();
-          vertex(272, 342.1875);
-          vertex(271, 364.1875);
-          vertex(271, 384.1875);
-          vertex(269, 400.1875);
-          vertex(274, 415.1875);
-          vertex(283, 436.1875);
-          vertex(291, 454.1875);
-          vertex(305, 468.1875);
-          vertex(309, 474.1875);
-          vertex(300, 484.1875);
-          vertex(288, 498.1875);
-          vertex(301, 515.1875);
-          vertex(317, 539.1875);
-          vertex(333, 561.1875);
-          vertex(353, 582.1875);
-          vertex(365, 601.1875);
-          vertex(380, 621.1875);
-          vertex(396, 646.1875);
-          vertex(410, 672.1875);
-          vertex(425, 692.1875);
-          vertex(441, 722.1875);
-          vertex(452, 741.1875);
-          vertex(462, 757.1875);
-          vertex(473, 772.1875);
-          vertex(445, 774.1875);
-          vertex(424, 774.1875);
-          vertex(399, 774.1875);
-          vertex(368, 774.1875);
-          vertex(343, 774.1875);
-          vertex(306, 776.1875);
-          vertex(284, 774.1875);
-          vertex(259, 772.1875);
-          vertex(223, 773.1875);
-          vertex(185, 774.1875);
-          vertex(144, 772.1875);
-          vertex(111, 774.1875);
-          vertex(81, 773.1875);
-          vertex(43, 773.1875);
-          vertex(12, 770.1875);
-          vertex(9, 756.1875);
-          vertex(6, 727.1875);
-          vertex(6, 710.1875);
-          vertex(6, 682.1875);
-          vertex(7, 662.1875);
-          vertex(13, 644.1875);
-          vertex(25, 620.1875);
-          vertex(35, 594.1875);
-          vertex(56, 565.1875);
-          vertex(71, 544.1875);
-          vertex(91, 523.1875);
-          vertex(106, 506.1875);
-          vertex(128, 483.1875);
-          vertex(136, 471.1875);
-          vertex(145, 457.1875);
-          vertex(159, 444.1875);
-          vertex(172, 429.1875);
-          vertex(184, 414.1875);
-          vertex(197, 415.1875);
-          vertex(219, 399.1875);
-          vertex(229, 384.1875);
-          vertex(239, 370.1875);
-          vertex(245, 351.1875);
-          vertex(250, 332.1875);
-          vertex(260, 337.1875);
-          vertex(273, 344.1875);
-          endShape();
-
-          // Cabell
-          fill(120, 100, 80); // Marró neutre
-          stroke(0);
-          beginShape();
-          vertex(426, 266.1875);
-          vertex(406, 286.1875);
-          vertex(375, 311.1875);
-          vertex(359, 320.1875);
-          vertex(338, 336.1875);
-          vertex(309, 346.1875);
-          vertex(283, 346.1875);
-          vertex(255, 335.1875);
-          vertex(247, 346.1875);
-          vertex(224, 357.1875);
-          vertex(203, 353.1875);
-          vertex(184, 343.1875);
-          vertex(170, 325.1875);
-          vertex(171, 306.1875);
-          vertex(180, 272.1875);
-          vertex(197, 256.1875);
-          vertex(197, 233.1875);
-          vertex(208, 213.1875);
-          vertex(224, 199.1875);
-          vertex(229, 185.1875);
-          vertex(239, 174.1875);
-          vertex(242, 155.1875);
-          vertex(248, 130.1875);
-          vertex(265, 108.1875);
-          vertex(274, 88.1875);
-          vertex(284, 71.1875);
-          vertex(303, 65.1875);
-          vertex(327, 65.1875);
-          vertex(349, 74.1875);
-          vertex(366, 84.1875);
-          vertex(378, 102.1875);
-          vertex(389, 129.1875);
-          vertex(407, 147.1875);
-          vertex(431, 159.1875);
-          vertex(442, 174.1875);
-          vertex(440, 197.1875);
-          vertex(455, 203.1875);
-          vertex(473, 219.1875);
-          vertex(488, 234.1875);
-          vertex(500, 260.1875);
-          vertex(494, 285.1875);
-          vertex(482, 301.1875);
-          vertex(469, 310.1875);
-          vertex(474, 285.1875);
-          vertex(470, 262.1875);
-          vertex(457, 241.1875);
-          vertex(449, 247.1875);
-          vertex(429, 263.1875);
-          endShape();
-
-          // Llavis neutres (línia recta)
-          fill(200, 150, 160);
-          stroke(0);
-          line(370, 450, 400, 450);
-          break;
-
-case 'disgusted':
-  // Degradat de fons amb colors verdosos/groguencs (associats amb malestar)
-  for (let y = 0; y < VIRTUAL_H; y++) {
-    let inter = map(y, 0, VIRTUAL_H, 0, 1);
-    let c = lerpColor(color(180, 200, 150), color(100, 150, 80), inter); // Verd clar a verd fosc
-    stroke(c);
-    line(0, y, VIRTUAL_W, y);
-  }
-
-  // Cara
-  fill(230, 200, 180); // To de pell lleugerament pàl·lid
-  stroke(0);
-  beginShape();
-  vertex(453, 246.1875);
-  vertex(435, 262.1875);
-  vertex(422, 272.1875);
-  vertex(399, 282.1875);
-  vertex(381, 287.1875);
-  vertex(371, 296.1875);
-  vertex(362, 314.1875);
-  vertex(346, 334.1875);
-  vertex(326, 343.1875);
-  vertex(307, 351.1875);
-  vertex(293, 351.1875);
-  vertex(278, 348.1875);
-  vertex(277, 361.1875);
-  vertex(277, 378.1875);
-  vertex(277, 407.1875);
-  vertex(284, 425.1875);
-  vertex(287, 441.1875);
-  vertex(293, 453.1875);
-  vertex(303, 460.1875);
-  vertex(309, 468.1875);
-  vertex(320, 474.1875);
-  vertex(331, 479.1875);
-  vertex(343, 479.1875);
-  vertex(355, 477.1875);
-  vertex(364, 471.1875);
-  vertex(373, 462.1875);
-  vertex(382, 456.1875);
-  vertex(391, 452.1875);
-  vertex(401, 441.1875);
-  vertex(410, 426.1875);
-  vertex(423, 421.1875);
-  vertex(436, 416.1875);
-  vertex(436, 400.1875);
-  vertex(438, 377.1875);
-  vertex(438, 361.1875);
-  vertex(445, 352.1875);
-  vertex(456, 335.1875);
-  vertex(465, 320.1875);
-  vertex(470, 299.1875);
-  vertex(471, 274.1875);
-  vertex(466, 256.1875);
-  vertex(454, 246.1875);
-  endShape();
-
-  // Ull esquerre (lleugerament entreobert)
-  fill(255);
-  stroke(0);
-  beginShape();
-  vertex(414, 342.1875);
-  vertex(403, 341.1875);
-  vertex(392, 344.1875);
-  vertex(392, 351.1875);
-  vertex(399, 355.1875);
-  vertex(408, 356.1875);
-  vertex(413, 350.1875);
-  vertex(414, 343.1875);
-  endShape();
-  fill(0); // Iris
-  ellipse(403, 348, 8, 8); // Ajusta la posició de l'iris si cal
-
-  // Celles amb lleugera arrugada (cap avall al centre)
-  stroke(0);
-  strokeWeight(3);
-  noFill();
-  beginShape();
-  vertex(390, 335);
-  vertex(395, 330);
-  vertex(400, 335);
-  vertex(405, 335);
-  endShape();
-  strokeWeight(1);
-
-  // Nas (amb un toc d'arrugues per fastig)
-  fill(220, 180, 160);
-  stroke(0);
-  beginShape();
-  vertex(436, 343.1875);
-  vertex(423, 357.1875);
-  vertex(418, 368.1875);
-  vertex(411, 386.1875);
-  vertex(405, 395.1875);
-  vertex(398, 404.1875);
-  vertex(398, 413.1875);
-  vertex(400, 420.1875);
-  vertex(409, 423.1875);
-  vertex(420, 423.1875);
-  vertex(429, 423.1875);
-  vertex(438, 419.1875);
-  vertex(441, 408.1875);
-  vertex(438, 367.1875);
-  vertex(436, 348.1875);
-  vertex(436, 344.1875);
-  endShape();
-  // Petites línies per simular l'arruga del nas
-  line(410, 375, 405, 380);
-  line(420, 370, 415, 375);
-
-
-  // Cos
-  fill(120, 150, 100); // Roba de colors apagats
-  stroke(0);
-  beginShape();
-  vertex(272, 342.1875);
-  vertex(271, 364.1875);
-  vertex(271, 384.1875);
-  vertex(269, 400.1875);
-  vertex(274, 415.1875);
-  vertex(283, 436.1875);
-  vertex(291, 454.1875);
-  vertex(305, 468.1875);
-  vertex(309, 474.1875);
-  vertex(300, 484.1875);
-  vertex(288, 498.1875);
-  vertex(301, 515.1875);
-  vertex(317, 539.1875);
-  vertex(333, 561.1875);
-  vertex(353, 582.1875);
-  vertex(365, 601.1875);
-  vertex(380, 621.1875);
-  vertex(396, 646.1875);
-  vertex(410, 672.1875);
-  vertex(425, 692.1875);
-  vertex(441, 722.1875);
-  vertex(452, 741.1875);
-  vertex(462, 757.1875);
-  vertex(473, 772.1875);
-  vertex(445, 774.1875);
-  vertex(424, 774.1875);
-  vertex(399, 774.1875);
-  vertex(368, 774.1875);
-  vertex(343, 774.1875);
-  vertex(306, 776.1875);
-  vertex(284, 774.1875);
-  vertex(259, 772.1875);
-  vertex(223, 773.1875);
-  vertex(185, 774.1875);
-  vertex(144, 772.1875);
-  vertex(111, 774.1875);
-  vertex(81, 773.1875);
-  vertex(43, 773.1875);
-  vertex(12, 770.1875);
-  vertex(9, 756.1875);
-  vertex(6, 727.1875);
-  vertex(6, 710.1875);
-  vertex(6, 682.1875);
-  vertex(7, 662.1875);
-  vertex(13, 644.1875);
-  vertex(25, 620.1875);
-  vertex(35, 594.1875);
-  vertex(56, 565.1875);
-  vertex(71, 544.1875);
-  vertex(91, 523.1875);
-  vertex(106, 506.1875);
-  vertex(128, 483.1875);
-  vertex(136, 471.1875);
-  vertex(145, 457.1875);
-  vertex(159, 444.1875);
-  vertex(172, 429.1875);
-  vertex(184, 414.1875);
-  vertex(197, 415.1875);
-  vertex(219, 399.1875);
-  vertex(229, 384.1875);
-  vertex(239, 370.1875);
-  vertex(245, 351.1875);
-  vertex(250, 332.1875);
-  vertex(260, 337.1875);
-  vertex(273, 344.1875);
-  endShape();
-
-  // Cabell
-  fill(80, 60, 40); // Marró fosc i apagat
-  stroke(0);
-  beginShape();
-  vertex(426, 266.1875);
-  vertex(406, 286.1875);
-  vertex(375, 311.1875);
-  vertex(359, 320.1875);
-  vertex(338, 336.1875);
-  vertex(309, 346.1875);
-  vertex(283, 346.1875);
-  vertex(255, 335.1875);
-  vertex(247, 346.1875);
-  vertex(224, 357.1875);
-  vertex(203, 353.1875);
-  vertex(184, 343.1875);
-  vertex(170, 325.1875);
-  vertex(171, 306.1875);
-  vertex(180, 272.1875);
-  vertex(197, 256.1875);
-  vertex(197, 233.1875);
-  vertex(208, 213.1875);
-  vertex(224, 199.1875);
-  vertex(229, 185.1875);
-  vertex(239, 174.1875);
-  vertex(242, 155.1875);
-  vertex(248, 130.1875);
-  vertex(265, 108.1875);
-  vertex(274, 88.1875);
-  vertex(284, 71.1875);
-  vertex(303, 65.1875);
-  vertex(327, 65.1875);
-  vertex(349, 74.1875);
-  vertex(366, 84.1875);
-  vertex(378, 102.1875);
-  vertex(389, 129.1875);
-  vertex(407, 147.1875);
-  vertex(431, 159.1875);
-  vertex(442, 174.1875);
-  vertex(440, 197.1875);
-  vertex(455, 203.1875);
-  vertex(473, 219.1875);
-  vertex(488, 234.1875);
-  vertex(500, 260.1875);
-  vertex(494, 285.1875);
-  vertex(482, 301.1875);
-  vertex(469, 310.1875);
-  vertex(474, 285.1875);
-  vertex(470, 262.1875);
-  vertex(457, 241.1875);
-  vertex(449, 247.1875);
-  vertex(429, 263.1875);
-  endShape();
-
-  // Llavis (amb la boca lleugerament arrufada o un costat cap avall)
-  fill(150, 100, 80); // To de llavis apagat
-  stroke(0);
-  beginShape();
-  vertex(370, 455);
-  vertex(385, 450); // Lleugera arruga al centre o un costat
-  vertex(400, 455);
-  endShape();
-          break;
-case 'fearful':
-  // Degradat de fons amb colors freds i foscos (blaus, grisos, violacis)
-  for (let y = 0; y < VIRTUAL_H; y++) {
-    let inter = map(y, 0, VIRTUAL_H, 0, 1);
-    let c = lerpColor(color(100, 120, 150), color(50, 60, 90), inter); // Blau grisenc a blau fosc
-    stroke(c);
-    line(0, y, VIRTUAL_W, y);
-  }
-
-  // Cara
-  fill(240, 210, 190); // To de pell lleugerament pàl·lid o verdós
-  stroke(0);
-  beginShape();
-  vertex(453, 246.1875);
-  vertex(435, 262.1875);
-  vertex(422, 272.1875);
-  vertex(399, 282.1875);
-  vertex(381, 287.1875);
-  vertex(371, 296.1875);
-  vertex(362, 314.1875);
-  vertex(346, 334.1875);
-  vertex(326, 343.1875);
-  vertex(307, 351.1875);
-  vertex(293, 351.1875);
-  vertex(278, 348.1875);
-  vertex(277, 361.1875);
-  vertex(277, 378.1875);
-  vertex(277, 407.1875);
-  vertex(284, 425.1875);
-  vertex(287, 441.1875);
-  vertex(293, 453.1875);
-  vertex(303, 460.1875);
-  vertex(309, 468.1875);
-  vertex(320, 474.1875);
-  vertex(331, 479.1875);
-  vertex(343, 479.1875);
-  vertex(355, 477.1875);
-  vertex(364, 471.1875);
-  vertex(373, 462.1875);
-  vertex(382, 456.1875);
-  vertex(391, 452.1875);
-  vertex(401, 441.1875);
-  vertex(410, 426.1875);
-  vertex(423, 421.1875);
-  vertex(436, 416.1875);
-  vertex(436, 400.1875);
-  vertex(438, 377.1875);
-  vertex(438, 361.1875);
-  vertex(445, 352.1875);
-  vertex(456, 335.1875);
-  vertex(465, 320.1875);
-  vertex(470, 299.1875);
-  vertex(471, 274.1875);
-  vertex(466, 256.1875);
-  vertex(454, 246.1875);
-  endShape();
-
-  // Ull esquerre (ben obert i iris petit, centrat)
-  fill(255);
-  stroke(0);
-  beginShape();
-  vertex(414, 342.1875);
-  vertex(403, 341.1875);
-  vertex(392, 344.1875);
-  vertex(392, 351.1875);
-  vertex(399, 355.1875);
-  vertex(408, 356.1875);
-  vertex(413, 350.1875);
-  vertex(414, 343.1875);
-  endShape();
-  fill(0); // Iris
-  ellipse(403, 348, 6, 6); // Iris més petit
-
-  // Celles aixecades i lleugerament arquejades
-  stroke(0);
-  strokeWeight(3);
-  noFill();
-  beginShape();
-  vertex(390, 315);
-  vertex(398, 310);
-  vertex(405, 315);
-  endShape();
-  strokeWeight(1);
-
-  // Nas
-  fill(240, 200, 180);
-  stroke(0);
-  beginShape();
-  vertex(436, 343.1875);
-  vertex(423, 357.1875);
-  vertex(418, 368.1875);
-  vertex(411, 386.1875);
-  vertex(405, 395.1875);
-  vertex(398, 404.1875);
-  vertex(398, 413.1875);
-  vertex(400, 420.1875);
-  vertex(409, 423.1875);
-  vertex(420, 423.1875);
-  vertex(429, 423.1875);
-  vertex(438, 419.1875);
-  vertex(441, 408.1875);
-  vertex(438, 367.1875);
-  vertex(436, 348.1875);
-  vertex(436, 344.1875);
-  endShape();
-
-  // Cos
-  fill(100, 120, 150); // Roba de colors freds
-  stroke(0);
-  beginShape();
-  vertex(272, 342.1875);
-  vertex(271, 364.1875);
-  vertex(271, 384.1875);
-  vertex(269, 400.1875);
-  vertex(274, 415.1875);
-  vertex(283, 436.1875);
-  vertex(291, 454.1875);
-  vertex(305, 468.1875);
-  vertex(309, 474.1875);
-  vertex(300, 484.1875);
-  vertex(288, 498.1875);
-  vertex(301, 515.1875);
-  vertex(317, 539.1875);
-  vertex(333, 561.1875);
-  vertex(353, 582.1875);
-  vertex(365, 601.1875);
-  vertex(380, 621.1875);
-  vertex(396, 646.1875);
-  vertex(410, 672.1875);
-  vertex(425, 692.1875);
-  vertex(441, 722.1875);
-  vertex(452, 741.1875);
-  vertex(462, 757.1875);
-  vertex(473, 772.1875);
-  vertex(445, 774.1875);
-  vertex(424, 774.1875);
-  vertex(399, 774.1875);
-  vertex(368, 774.1875);
-  vertex(343, 774.1875);
-  vertex(306, 776.1875);
-  vertex(284, 774.1875);
-  vertex(259, 772.1875);
-  vertex(223, 773.1875);
-  vertex(185, 774.1875);
-  vertex(144, 772.1875);
-  vertex(111, 774.1875);
-  vertex(81, 773.1875);
-  vertex(43, 773.1875);
-  vertex(12, 770.1875);
-  vertex(9, 756.1875);
-  vertex(6, 727.1875);
-  vertex(6, 710.1875);
-  vertex(6, 682.1875);
-  vertex(7, 662.1875);
-  vertex(13, 644.1875);
-  vertex(25, 620.1875);
-  vertex(35, 594.1875);
-  vertex(56, 565.1875);
-  vertex(71, 544.1875);
-  vertex(91, 523.1875);
-  vertex(106, 506.1875);
-  vertex(128, 483.1875);
-  vertex(136, 471.1875);
-  vertex(145, 457.1875);
-  vertex(159, 444.1875);
-  vertex(172, 429.1875);
-  vertex(184, 414.1875);
-  vertex(197, 415.1875);
-  vertex(219, 399.1875);
-  vertex(229, 384.1875);
-  vertex(239, 370.1875);
-  vertex(245, 351.1875);
-  vertex(250, 332.1875);
-  vertex(260, 337.1875);
-  vertex(273, 344.1875);
-  endShape();
-
-  // Cabell
-  fill(70, 50, 90); // Colors foscos i freds
-  stroke(0);
-  beginShape();
-  vertex(426, 266.1875);
-  vertex(406, 286.1875);
-  vertex(375, 311.1875);
-  vertex(359, 320.1875);
-  vertex(338, 336.1875);
-  vertex(309, 346.1875);
-  vertex(283, 346.1875);
-  vertex(255, 335.1875);
-  vertex(247, 346.1875);
-  vertex(224, 357.1875);
-  vertex(203, 353.1875);
-  vertex(184, 343.1875);
-  vertex(170, 325.1875);
-  vertex(171, 306.1875);
-  vertex(180, 272.1875);
-  vertex(197, 256.1875);
-  vertex(197, 233.1875);
-  vertex(208, 213.1875);
-  vertex(224, 199.1875);
-  vertex(229, 185.1875);
-  vertex(239, 174.1875);
-  vertex(242, 155.1875);
-  vertex(248, 130.1875);
-  vertex(265, 108.1875);
-  vertex(274, 88.1875);
-  vertex(284, 71.1875);
-  vertex(303, 65.1875);
-  vertex(327, 65.1875);
-  vertex(349, 74.1875);
-  vertex(366, 84.1875);
-  vertex(378, 102.1875);
-  vertex(389, 129.1875);
-  vertex(407, 147.1875);
-  vertex(431, 159.1875);
-  vertex(442, 174.1875);
-  vertex(440, 197.1875);
-  vertex(455, 203.1875);
-  vertex(473, 219.1875);
-  vertex(488, 234.1875);
-  vertex(500, 260.1875);
-  vertex(494, 285.1875);
-  vertex(482, 301.1875);
-  vertex(469, 310.1875);
-  vertex(474, 285.1875);
-  vertex(470, 262.1875);
-  vertex(457, 241.1875);
-  vertex(449, 247.1875);
-  vertex(429, 263.1875);
-  endShape();
-
-  // Llavis (oberts en una forma rígida, de vegades tensa o lleugerament cap avall)
-  fill(200, 100, 120);
-  stroke(0);
-  beginShape();
-  vertex(375, 460);
-  vertex(385, 455);
-  vertex(395, 460);
-  endShape();
-          break;
-          
-        default:
-          stroke(150,150,150,150); // gris suau
-          beginShape();
-          vertex(0, 0);
-          vertex(VIRTUAL_W, 0);
-          vertex(VIRTUAL_W, VIRTUAL_H);
-          vertex(0, VIRTUAL_H);
-          endShape(CLOSE);
-      }
-    }
-  </script>
+        default:
+          // Se usa un cuadrado simple como fondo por defecto si ninguna emoción es dominante
+          stroke(150, 150, 150, 150);
+          beginShape();
+          vertex(0, 0);
+          vertex(VIRTUAL_W, 0);
+          vertex(VIRTUAL_W, VIRTUAL_H);
+          vertex(0, VIRTUAL_H);
+          endShape(CLOSE);
+          break;
+      }
+    }
+  </script>
 </body>
 </html>
