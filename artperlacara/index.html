@@ -1368,15 +1368,17 @@ endShape();
 
 case 'disgusted':
   // Degradat de fons amb colors verdosos/groguencs (associats amb malestar)
+  // Ajuste de intensidad: verdes más saturados y oscuros.
   for (let y = 0; y < VIRTUAL_H; y++) {
     let inter = map(y, 0, VIRTUAL_H, 0, 1);
-    let c = lerpColor(color(180, 200, 150), color(100, 150, 80), inter); // Verd clar a verd fosc
+    let c = lerpColor(color(160, 220, 100), color(70, 120, 50), inter); // Verdes más vibrantes y sucios
     stroke(c);
     line(0, y, VIRTUAL_W, y);
   }
 
   // Cara
-  fill(230, 200, 180); // To de pell lleugerament pàl·lid
+  // Ajuste de intensidad: tono de piel más pálido y con un toque de verdor.
+  fill(220, 190, 160); // To de pell lleugerament pàl·lid i tirant a verdós
   stroke(0);
   beginShape();
   vertex(453, 246.1875);
@@ -1452,7 +1454,8 @@ case 'disgusted':
   strokeWeight(1);
 
   // Nas (amb un toc d'arrugues per fastig)
-  fill(220, 180, 160);
+  // Ajuste de intensidad: tono más apagado y con un matiz "enfermizo".
+  fill(200, 160, 140); // To de nas més apagat i amb un toc groguenc/verdós
   stroke(0);
   beginShape();
   vertex(436, 343.1875);
@@ -1478,7 +1481,8 @@ case 'disgusted':
 
 
   // Cos
-  fill(120, 150, 100); // Roba de colors apagats
+  // Ajuste de intensidad: colores más oscuros y sucios, para reflejar el malestar.
+  fill(90, 120, 70); // Roba de colors més apagats i verdosos/grisencs
   stroke(0);
   beginShape();
   vertex(272, 342.1875);
@@ -1549,7 +1553,8 @@ case 'disgusted':
   endShape();
 
   // Cabell
-  fill(80, 60, 40); // Marró fosc i apagat
+  // Ajuste de intensidad: marrón más oscuro y "sin vida".
+  fill(60, 40, 20); // Marró fosc i apagat
   stroke(0);
   beginShape();
   vertex(426, 266.1875);
@@ -1603,14 +1608,15 @@ case 'disgusted':
   endShape();
 
   // Llavis (amb la boca lleugerament arrufada o un costat cap avall)
-  fill(150, 100, 80); // To de llavis apagat
+  // Ajuste de intensidad: tono más pálido y verdoso, casi sin vida.
+  fill(130, 80, 60); // To de llavis apagat i tirant a verdós
   stroke(0);
   beginShape();
   vertex(370, 455);
   vertex(385, 450); // Lleugera arruga al centre o un costat
   vertex(400, 455);
   endShape();
-          break; 
+  break;
 case 'fearful':
   // Degradat de fons amb colors freds i foscos (blaus, grisos, violacis)
   for (let y = 0; y < VIRTUAL_H; y++) {
